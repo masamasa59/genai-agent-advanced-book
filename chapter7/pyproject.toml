@@ -1,28 +1,35 @@
-[tool.poetry]
-name = "agent-book"
+[project]
+name = "chapter7"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <user@example.com>"]
+authors = [
+    { name = "Your Name", email = "user@example.com" }
+]
 readme = "README.md"
-packages = [{include = "agent_book"}]
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.53.1",
+    "langgraph>=0.2.14",
+    "pydantic-settings>=2.4.0",
+    "langchain>=0.3.0",
+    "promptflow-tracing>=1.16.1",
+    "promptflow-devkit>=1.16.1",
+    "langchain-openai>=0.3.6",
+    "jira>=3.8.0"
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-openai = "^1.53.1"
-langgraph = "^0.2.14"
-pydantic-settings = "^2.4.0"
-langchain = "^0.3.0" 
-promptflow-tracing = "^1.16.1"
-promptflow-devkit = "^1.16.1"
-langchain-openai = "^0.3.6"
-jira = "^3.8.0"
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.5"
+[project.optional-dependencies]
+dev = [
+    "ipykernel>=6.29.5"
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["chapter7"]
 
 [tool.ruff]
 select = [
@@ -39,7 +46,7 @@ exclude = [
 ]
 line-length = 119
 indent-width = 4
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
