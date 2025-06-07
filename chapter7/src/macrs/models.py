@@ -3,10 +3,11 @@ from pydantic import BaseModel, Field
 
 # ステートの定義
 class AgentState(TypedDict):
-    user_input: list[str]	
-    conversation_history: str	
-    exit: bool	
+    user_input: str
+    conversation_history: str
+    exit: bool
     selected_agent: str
+    current_response: str
 
 # ルーティング用の出力構造
 class Router(BaseModel):
