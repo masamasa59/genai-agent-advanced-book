@@ -38,6 +38,7 @@ class UserInputAgent(BaseAgent):
         if user_input.lower() == "exit":
             print("対話を終了します。ありがとうございました！")
             state["exit"] = True
+            return state
         else:
             state["conversation_history"] += f"\nユーザー: {user_input}"
             state["user_input"] = user_input
@@ -188,9 +189,6 @@ class MACRS:
         while not state.get("exit"):
             result = await app.ainvoke(state)
             state.update(result)
-            if state["exit"]:
-                print("対話を終了します。ありがとうございました！")
-                break
 
 if __name__ == "__main__":
     asyncio.run(MACRS().run_agent())
