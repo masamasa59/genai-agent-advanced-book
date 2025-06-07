@@ -1,9 +1,10 @@
+import os
+import sys
 from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from langgraph.graph import END, START, StateGraph
 from langgraph.pregel import Pregel
 
 from configs import Settings
-from custom_logger import setup_logger
 from models import RolePlayList, Persona, Improvement, AgentState, AgentResult
 from prompts import (
     CONTENTS_LIST, 
@@ -14,6 +15,12 @@ from prompts import (
     CONTENT_IMPROVER_PROMPT,
     QUESTIONNAIRE
 )
+
+sys.path.append(
+    os.path.join(os.path.dirname(__file__), "../..")
+)  # srcディレクトリをパスに追加
+
+from src.custom_logger import setup_logger
 
 logger = setup_logger(__name__)
 

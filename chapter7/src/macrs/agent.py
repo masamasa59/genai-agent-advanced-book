@@ -1,3 +1,6 @@
+import os
+import sys
+
 import asyncio
 from dotenv import load_dotenv
 
@@ -13,7 +16,12 @@ from prompts import (
     CHITCHAT_PROMPT,
     PLANNER_PROMPT,
 )
-from custom_logger import setup_logger
+
+sys.path.append(
+    os.path.join(os.path.dirname(__file__), "../..")
+)  # srcディレクトリをパスに追加
+
+from src.custom_logger import setup_logger
 
 logger = setup_logger(__name__)
 

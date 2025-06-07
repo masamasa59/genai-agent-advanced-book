@@ -11,6 +11,3 @@ def setup_logger(name: str = __name__, level: int = logging.INFO) -> logging.Log
         logger.addHandler(handler)
     logger.setLevel(level)
     return logger
-
-# 利用例:
-logger = setup_logger()
