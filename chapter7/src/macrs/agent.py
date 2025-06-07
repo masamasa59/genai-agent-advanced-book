@@ -50,7 +50,7 @@ class QuestionAgent(BaseAgent):
             {"role": "system", "content": prompt},
             {"role": "user", "content": "ユーザーとの過去の会話履歴：" + state["conversation_history"]},
         ]
-        response = self.client.invoke(messages)
+        response = await self.client.ainvoke(messages)
         question = response.content
         logger.info("AIエージェント (質問) : %s", question)
         state["conversation_history"] += "\n質問: " + question
@@ -67,7 +67,7 @@ class RecommendationAgent(BaseAgent):
             {"role": "system", "content": prompt},
             {"role": "user", "content": "ユーザーとの過去の会話履歴：" + state["conversation_history"]},
         ]
-        response = self.client.invoke(messages)
+        response = await self.client.ainvoke(messages)
         recommendation = response.content
         logger.info("AIエージェント (レコメンド) : %s", recommendation)
         state["recommendation"] = recommendation
@@ -84,7 +84,7 @@ class ChitChatAgent(BaseAgent):
             {"role": "system", "content": CHITCHAT_PROMPT},
             {"role": "user", "content": "ユーザーとの過去の会話履歴：" + state["conversation_history"]},
         ]
-        response = self.client.invoke(messages)
+        response = await self.client.ainvoke(messages)
         chitchat = response.content
         logger.info("AIエージェント (雑談) : %s", chitchat)
         state["conversation_history"] += "\nおしゃべり: " + chitchat
@@ -100,7 +100,7 @@ class PlannerAgent(BaseAgent):
             {"role": "system", "content": PLANNER_PROMPT},
             {"role": "user", "content": f"ユーザーの入力: {state['user_input']}\n会話履歴: {state['conversation_history']}"},
         ]
-        response = self.client_router.invoke(messages)
+        response = await self.client_router.ainvoke(messages)
         selected_agent_int = response.selected_agent_int
         agents = ["QuestionAgent", "ChitChatAgent", "RecommendationAgent"]
         selected_agent = agents[selected_agent_int]
