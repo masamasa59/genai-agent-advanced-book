@@ -1,11 +1,9 @@
-import os
 import asyncio
 from dotenv import load_dotenv
 
 from langchain_openai import AzureChatOpenAI
 from langgraph.graph import StateGraph
 from langgraph.pregel import Pregel
-from pydantic import BaseModel
 
 from configs import Settings
 from models import AgentState, Router
@@ -21,12 +19,12 @@ logger = setup_logger(__name__)
 
 # 各エージェントの共通インターフェース
 class BaseAgent:
-    async def run(self, state: Dict) -> Dict:
+    async def run(self, state: dict) -> dict:
         raise NotImplementedError("runメソッドを実装してください。")
 
 # ユーザー入力エージェント
 class UserInputAgent(BaseAgent):
-    async def run(self, state: Dict, prompt="あなた: ") -> Dict:
+    async def run(self, state: dict, prompt="あなた: ") -> dict:
         user_input = input(prompt)
         logger.info("ユーザー : %s", user_input)
         if user_input.lower() == "exit":
@@ -46,7 +44,7 @@ class QuestionAgent(BaseAgent):
     def __init__(self, client: AzureChatOpenAI):
         self.client = client
 
-    async def run(self, state: Dict) -> Dict:
+    async def run(self, state: dict) -> dict:
         prompt = QUESTION_PROMPT
         messages = [
             {"role": "system", "content": prompt},
@@ -63,7 +61,7 @@ class RecommendationAgent(BaseAgent):
     def __init__(self, client: AzureChatOpenAI):
         self.client = client
 
-    async def run(self, state: Dict) -> Dict:
+    async def run(self, state: dict) -> dict:
         prompt = RECOMMENDATION_PROMPT
         messages = [
             {"role": "system", "content": prompt},
@@ -81,7 +79,7 @@ class ChitChatAgent(BaseAgent):
     def __init__(self, client: AzureChatOpenAI):
         self.client = client
 
-    async def run(self, state: Dict) -> Dict:
+    async def run(self, state: dict) -> dict:
         messages = [
             {"role": "system", "content": CHITCHAT_PROMPT},
             {"role": "user", "content": "ユーザーとの過去の会話履歴：" + state["conversation_history"]},
@@ -97,7 +95,7 @@ class PlannerAgent(BaseAgent):
     def __init__(self, client_router: AzureChatOpenAI):
         self.client_router = client_router
 
-    async def run(self, state: Dict) -> Dict:
+    async def run(self, state: dict) -> dict:
         messages = [
             {"role": "system", "content": PLANNER_PROMPT},
             {"role": "user", "content": f"ユーザーの入力: {state['user_input']}\n会話履歴: {state['conversation_history']}"},

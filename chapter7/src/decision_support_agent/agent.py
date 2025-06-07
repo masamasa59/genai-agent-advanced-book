@@ -1,5 +1,3 @@
-import os
-import logging
 from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from langgraph.graph import END, START, StateGraph
 from langgraph.pregel import Pregel

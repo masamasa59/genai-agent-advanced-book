@@ -1,4 +1,4 @@
-from typing import Optional, TypedDict
+from typing import TypedDict
 from pydantic import BaseModel, Field
 
 # ステートの定義
