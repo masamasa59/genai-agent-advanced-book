@@ -9,6 +9,3 @@ class Settings:
     AZURE_OPENAI_DEPLOYMENT_NAME_MINI: str = os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME_MINI")
     AZURE_OPENAI_ENDPOINT: str = os.environ.get("AZURE_OPENAI_ENDPOINT")
     # 必要に応じて他の設定も追加可能
-
-def get_settings() -> Settings:
-    return Settings()

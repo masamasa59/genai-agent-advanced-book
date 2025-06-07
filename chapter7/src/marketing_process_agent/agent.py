@@ -2,7 +2,7 @@ from typing import Dict, List, Any
 from langgraph.graph import END, START, StateGraph
 from langgraph.pregel import Pregel
 
-from configs import get_settings
+from configs import Settings
 from custom_logger import setup_logger
 from models import Task, PlanList, AgentState, AgentResult, Feedback
 from prompts import PLANNER_PROMPT,CRITIC_PROMPT
@@ -25,7 +25,7 @@ logger = setup_logger(__name__)
 class PlannerAgent:
     def __init__(self, jira_client, client_plan):
         self.jira_client = jira_client
-        self.JIRA_PROJECT_KEY = get_settings().JIRA_PROJECT_KEY
+        self.JIRA_PROJECT_KEY = Settings().JIRA_PROJECT_KEY
         # MarketingProcessAgentから渡されたclient_planを利用
         self.client_plan = client_plan
 
@@ -76,7 +76,7 @@ class PlannerAgent:
 class ActorAgent:
     def __init__(self):
         # 各エージェント専用の設定があればここで初期化（例：独自のログ設定など）
-        self.settings = get_settings()
+        self.settings = Settings()
 
     def run(self, state: AgentState) -> AgentState:
         """
@@ -161,7 +161,7 @@ class MarketingProcessAgent:
     エージェントに渡すように修正
     """
     def __init__(self):
-        self.settings = get_settings()
+        self.settings = Settings()
 
         # クライアント情報の初期化（MarketingProcessAgentで一元管理）
         self.jira_client = JIRA(

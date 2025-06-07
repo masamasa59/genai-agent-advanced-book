@@ -11,6 +11,3 @@ class Settings:
     JIRA_TOKEN: str = os.environ.get("JIRA_TOKEN")
     JIRA_PROJECT_KEY: str = os.environ.get("JIRA_PROJECT_KEY")
     JIRA_API_BASE_URL: str = os.environ.get("JIRA_API_BASE_URL", "https://marketing-ai-agent.atlassian.net")
-
-def get_settings() -> Settings:
-    return Settings()

@@ -4,7 +4,7 @@ from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from langgraph.graph import END, START, StateGraph
 from langgraph.pregel import Pregel
 
-from configs import get_settings
+from configs import Settings
 from custom_logger import setup_logger
 from models import RolePlayList, Persona, Improvement, AgentState, AgentResult
 from prompts import (
@@ -168,7 +168,7 @@ class ContentImproverAgent(BaseAgent):
 # DecisionSupportAgent が各エージェントを管理
 class DecisionSupportAgent:
     def __init__(self):
-        settings = get_settings()
+        settings = Settings()
         self.deployment_name = settings.AZURE_OPENAI_DEPLOYMENT_NAME
 
         # 各クライアントの初期化

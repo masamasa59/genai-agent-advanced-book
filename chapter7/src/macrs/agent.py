@@ -8,7 +8,7 @@ from langgraph.graph import StateGraph
 from langgraph.pregel import Pregel
 from pydantic import BaseModel
 
-from configs import get_settings
+from configs import Settings
 from models import AgentState, Router
 from prompts import (
     QUESTION_PROMPT,
@@ -115,7 +115,7 @@ class PlannerAgent(BaseAgent):
 class MACRS:
     def __init__(self):
         load_dotenv()
-        self.settings = get_settings()
+        self.settings = Settings()
         self.deployment_name = self.settings.AZURE_OPENAI_DEPLOYMENT_NAME
 
         # Azure Chat OpenAI クライアントのセットアップ

@@ -2,7 +2,7 @@
 import os
 from typing import Any, Dict, List
 from jira import JIRA
-from configs import get_settings
+from configs import Settings
 from custom_logger import setup_logger
 from models import AgentState, Persona, ContentIdea, ContentIdeaList
 from prompts import (
@@ -15,7 +15,7 @@ from langchain_openai import AzureChatOpenAI
 logger = setup_logger(__name__)
 
 # --- JIRA設定 ---
-settings = get_settings()
+settings = Settings()
 JIRA_API_BASE_URL = settings.JIRA_API_BASE_URL
 JIRA_API_KEY = settings.JIRA_API_KEY
 JIRA_USER_EMAIL = settings.JIRA_USER_EMAIL
