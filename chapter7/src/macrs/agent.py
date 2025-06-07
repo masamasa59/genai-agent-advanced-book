@@ -1,6 +1,5 @@
 import os
 import asyncio
-from typing import Dict
 from dotenv import load_dotenv
 
 from langchain_openai import AzureChatOpenAI

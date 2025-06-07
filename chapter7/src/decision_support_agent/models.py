@@ -1,8 +1,8 @@
-from typing import List, Dict, Union, TypedDict
+from typing import TypedDict
 from pydantic import BaseModel, Field
 
 class RolePlayList(BaseModel):
-    persona_list: List[str] = Field(..., description="ロールプレイ中に使用する人格のリスト。")
+    persona_list: list[str] = Field(..., description="ロールプレイ中に使用する人格のリスト。")
 
 class Persona(BaseModel):
     role: str = Field(..., description="ロールプレイ中に使用する役割")
@@ -17,12 +17,12 @@ class Improvement(BaseModel):
 # ステートの定義
 class AgentState(TypedDict):
     request: str
-    contents: List[str]
-    personas: List[str]
+    contents: list[str]
+    personas: list[str]
     questionnaire: str
     report: str
-    evaluations: List[Dict[str, Union[str, int]]]
-    improved_contents: Union[List[str], None]
+    evaluations: list[dict[str, str | int]]
+    improved_contents: list[str] | None
 
 # エージェント実行結果としてAgentStateをそのまま利用
 AgentResult = AgentState

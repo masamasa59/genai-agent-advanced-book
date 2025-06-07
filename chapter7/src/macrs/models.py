@@ -1,9 +1,9 @@
-from typing import List, Optional, TypedDict
+from typing import Optional, TypedDict
 from pydantic import BaseModel, Field
 
 # ステートの定義
 class AgentState(TypedDict):
-    user_input: List[str]	
+    user_input: list[str]	
     conversation_history: str	
     exit: bool	
     selected_agent: str
