@@ -5,7 +5,7 @@ import asyncio
 from dotenv import load_dotenv
 
 from langchain_openai import AzureChatOpenAI
-from langgraph.graph import StateGraph
+from langgraph.graph import StateGraph, END
 from langgraph.pregel import Pregel
 
 from configs import Settings
@@ -158,7 +158,17 @@ class MACRS:
         
         # エントリーポイントの設定とエッジの接続
         workflow.set_entry_point("get_user_input")
-        workflow.add_edge("get_user_input", "planner_agent")
+        
+        # exitがTrueならば処理を終了、そうでなければplannerに進む
+        workflow.add_conditional_edges(
+            "get_user_input",
+            lambda state: "exit" if state.get("exit") else "continue",
+            {
+                "exit": END,
+                "continue": "planner_agent"
+            }
+        )
+        
         workflow.add_conditional_edges(
             "planner_agent",
             lambda state: state["selected_agent"],
@@ -171,7 +181,11 @@ class MACRS:
         return workflow.compile()
 
     async def run_agent(self):
-        """エージェントの実行"""
+        """エージェントの実行
+        
+        Returns:
+            dict: 最終的な状態の辞書
+        """
         
         app = self.create_graph()
         
@@ -184,11 +198,20 @@ class MACRS:
         print("タスク管理エージェントへようこそ！操作を開始してください（終了するには 'exit' と入力してください）。")
         # 初回実行
         result = await app.ainvoke(state)
+        # exitフラグがセットされていれば処理を中断
+        if result.get("exit"):
+            return result 
         state.update(result)
         # 対話のループ
         while not state.get("exit"):
             result = await app.ainvoke(state)
+            if result.get("exit"):
+                state.update(result)  # exitがTrueの場合も状態を更新
+                break
             state.update(result)
+            
+        # 最終的な状態を返す
+        return state
 
 if __name__ == "__main__":
     asyncio.run(MACRS().run_agent())
