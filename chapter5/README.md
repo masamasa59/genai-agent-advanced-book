@@ -618,5 +618,14 @@ uv run python scripts/09_generate_plan.py
 
 生成された分析結果のタスクをそれぞれ実行します。
 
+```bash
+uv run python scripts/10_execute_plan.py
+```
+
 ### 5.5.3 実行結果を反映したレポート生成
 
+最後に計画に対する分析結果を見やすくまとめたレポートを生成します。
+
+```bash
+uv run python scripts/11_generate_report.py
+```

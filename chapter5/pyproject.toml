@@ -72,7 +72,6 @@ ignore = [
     "TD002",    # missing todo author
     "TD003",    # missing todo link
     "T201",     # allow use of print statement
-    "F401",     # unused imports (for missing modules)
     "I001",     # import block is un-sorted or un-formatted
     "INP001",   # file does not exist
     "S101",     # use of assert statement
@@ -82,7 +81,6 @@ ignore = [
     "PLR2004",  # magic value used in comparison
 ]
 unfixable = [
-    "F401", # unused import
     "F841", # unused variable
 ]
 
