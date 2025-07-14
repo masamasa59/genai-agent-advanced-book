@@ -43,7 +43,8 @@ def main() -> None:
                 model="gpt-4o-2024-11-20",
                 process_id=f"sample-{idx}",
                 idx=idx,
-            ) for idx, task in enumerate(plan.tasks)
+            )
+            for idx, task in enumerate(plan.tasks)
         ]
         _results = [future.result() for future in as_completed(futures)]
 

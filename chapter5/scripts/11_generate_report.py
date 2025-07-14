@@ -15,7 +15,11 @@ from src.modules import (
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_file", type=str, default="data/sample.csv")
-    parser.add_argument("--user_request", type=str, default="scoreを最大化するための広告キャンペーンを検討したい")
+    parser.add_argument(
+        "--user_request",
+        type=str,
+        default="scoreを最大化するための広告キャンペーンを検討したい",
+    )
     parser.add_argument("--process_id", type=str, default="sample")
     parser.add_argument("--model", type=str, default="gpt-4o-mini-2024-07-18")
     args = parser.parse_args()
@@ -44,7 +48,8 @@ def main() -> None:
                 model=args.model,
                 process_id=f"sample-{idx}",
                 idx=idx,
-            ) for idx, task in enumerate(plan.tasks)
+            )
+            for idx, task in enumerate(plan.tasks)
         ]
         _results = [future.result() for future in as_completed(futures)]
 

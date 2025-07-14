@@ -42,7 +42,9 @@ def generate_response(
     else:
         # Structured Outputs
         completion = client.responses.parse(
-            model=model, input=messages, text_format=response_format,
+            model=model,
+            input=messages,
+            text_format=response_format,
         )
         content = completion.output[content_idx].content[0].parsed
     # コスト計算

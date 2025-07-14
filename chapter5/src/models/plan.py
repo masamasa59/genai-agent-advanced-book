@@ -63,6 +63,7 @@ class Task(BaseModel):
 #     archivement: str = Field(description="タスク要求から推測されるタスク達成条件")
 #     tasks: list[Task]
 
+
 class Plan(BaseModel):
     purpose: str = Field(description="タスク要求から解釈される問い合わせ目的")
     archivement: str = Field(description="タスク要求から推測されるタスク達成条件")

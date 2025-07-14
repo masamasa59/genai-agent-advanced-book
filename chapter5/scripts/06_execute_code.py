@@ -6,6 +6,7 @@ from src.modules import execute_code, set_dataframe
 
 load_dotenv()
 
+
 def main() -> None:
     with Sandbox() as sandbox:
         with open("data/sample.csv", "rb") as fi:

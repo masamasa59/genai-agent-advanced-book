@@ -14,6 +14,7 @@ from src.modules import (
 
 load_dotenv()
 
+
 def main() -> None:
     process_id = "07_generate_review"
     data_path = "data/sample.csv"
