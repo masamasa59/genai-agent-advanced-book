@@ -37,71 +37,65 @@ OPENAI_API_KEY=sk-proj-***
 <img src="https://i.gyazo.com/bdbe5fd77930add697f134cd153411c7.png">
 
 ## ディレクトリ構成
-```
-.
-├── .env
-├── core
-│   ├── domain
-│   │   ├── models
-│   │   │   ├── analysis_report.py
-│   │   │   ├── data_thread.py
-│   │   │   ├── program.py
-│   │   │   ├── reflection.py
-│   │   │   └── report_task.py
-│   │   ├── prompts
-│   │   │   ├── describe_dataframe.jinja
-│   │   │   ├── generate_analysis_report.jinja
-│   │   │   ├── generate_profile.jinja
-│   │   │   ├── generate_report_plan.jinja
-│   │   │   └── programmer.jinja
-│   │   ├── modules
-│   │   │   ├── describe_dataframe.py
-│   │   │   ├── execute_code.py
-│   │   │   ├── generate_plans.py
-│   │   │   ├── generate_report.py
-│   │   │   └── programmer.py
-│   ├── llms
-│   │   ├── context_manager.py
-│   │   ├── models
-│   │   │   └── llm_response.py
-│   │   └── libs
-│   │       └── openai_.py
-│   └── utils
-│       └── load_prompt.py
-├── data
+
+```tree
+chapter5
+├── data                              # サンプルデータ
 │   └── sample.csv
-├── main.py
-├── notebooks
-│   └── entire_graph_runner.ipynb
-├── pyproject.toml
-└── scripts
-    ├── 0_setup.sh
-    ├── 531_generate_code.sh
-    ├── 532_execute_code.sh
-    ├── 533_reflection.sh
-    ├── 541_generate_report_plan.sh
-    ├── 542_execute_subtask.sh
-    ├── 543_generate_analysis_report.sh
-    └── run_e2e.sh
+├── scripts                           # src 下ファイルのサンプル実行
+│   └── ...
+├── src
+│   ├── models
+│   │   ├── data_thread.py         # コード生成・実行。レビューのデータ型
+│   │   ├── program.py             # 5.4.1. コード生成
+│   │   ├── review.py              # 5.4.3. 実行結果のレビュー
+│   │   └── plan.py                # 5.5.1. 計画立案
+│   ├── modules
+│   │   ├── describe_dataframe.py  # 5.3.2. データセット概要
+│   │   ├── generate_code.py       # 5.4.1. コード生成
+│   │   ├── set_dataframe.py       # 5.4.2. Sandboxにデータをアップロード
+│   │   ├── execute_code.py        # 5.4.2. コード実行
+│   │   ├── generate_review.py     # 5.4.3. 実行結果のレビュー
+│   │   ├── generate_plan.py       # 5.5.1. 計画立案
+│   │   └── generate_report.py     # 5.5.3. レポート生成
+│   ├── prompts
+│   │   └── ...
+│   └── llms
+│       ├── apis
+│       │   └── openai.py          # OpenAI API
+│       ├── models
+│       │   └── llm_response.py    # LLM APIからの出力データ型
+│       └── utils
+│           └── load_prompt.py     # テンプレートファイルの読み込み
+├── .env                           # 環境変数の定義
+├── main.py                        # データ分析エージェントの実行スクリプト
+└── pyproject.toml                 # 依存関係の管理
 ```
 
-|ファイル名|説明|
-|:---|:---|
-|.env|環境変数の定義が含まれています|
-|core/|Pythonのソースコードが配置されています|
-|core/domain/|データ分析エージェントを構成するディレクトリです|
-|core/domain/models/|Pydantic で定義されるデータクラスが含まれています|
-|core/domain/prompts/|プロンプトの定義が含まれています|
-|core/domain/modules/|データ分析エージェントで使用するPythonの関数群が含まれています|
-|core/llms/|LLM を呼び出すソースコードが配置されています|
-|core/llms/libs|LLM API を提供するライブラリの LLM 呼び出しを記述します|
-|core/utils/|domain によらない共通の関数群が含まれています|
-|data/|解析対象のデータが含まれています|
-|main.py|データ分析エージェントを End-to-end に実行する場合のスクリプトが含まれています|
-|notebooks/|各種Jupyter Notebookが含まれており、個別の処理の実行確認に使用します|
-|pyproject.toml|uv による依存関係管理のファイルです|
-|scripts/|コマンドライン引数等を記述したシェルスクリプトが含まれます|
+### ライブラリ
 
+[pyproject.toml](/chapter5/pyproject.toml) の `project.dependencies` は以下の通りです。
+
+```toml
+dependencies = [
+    "e2b-code-interpreter>=1.1.0",
+    "jinja2>=3.1.6",
+    "langgraph>=0.3.11",
+    "loguru>=0.7.3",
+    "openai>=1.66.3",
+    "pandas>=2.2.3",
+    "pillow>=11.1.0",
+    "pydantic>=2.10.6",
+    "python-dotenv>=1.0.1",
+    "tabulate>=0.9.0",
+]
+```
+
+以下を実行して、依存パッケージをインストールしてください。
+
+```bash
+uv sync
+```
 
 ## 5.3 実装準備
 
@@ -238,9 +232,137 @@ response.content = re.sub(r"<.*?>", "", response.content).strip()
 
 ## 5.4 プログラム生成を行うシングルエージェントワークフロー
 
+本説では、コード生成・コード実行・実行結果のレビューを行う「プログラマー」としてのシングルエージェントワークフローを構築します。
+
+<img src="https://i.gyazo.com/0c2893618ab7513cabc5387073e4d6b6.png">
+
+プログラマーエージェントによるコーディング過程を管理できるよう、コード生成、コード実行、実行結果のレビューの一連の結果を `DataThread` として管理します（[src/models/data_thread.py](/chapter5/src/models/data_thread.py)）。
+
+```python
+class DataThread(BaseModel):
+    process_id: str
+    thread_id: int
+    user_request: str | None
+    code: str | None = None
+    error: str | None = None
+    stderr: str | None = None
+    stdout: str | None = None
+    is_completed: bool = False
+    observation: str | None = None
+    results: list[dict] = Field(default_factory=list)
+    pathes: dict | None = Field(default=dict(), init=False)
+```
+
 ### 5.4.1 コード生成（計画）
 
+ユーザーから入力されたデータとタスク要求に対して、その要求を満たすコードを LLM によって生成します。
+
+まずは構造化出力用のデータ型を `Program` として [src/models/program.py](/chapter5/src/models/program.py) に定義します。
+
+```python
+class Program(BaseModel):
+    achievement_condition: str = Field(description="要求の達成条件")
+    execution_plan: str = Field(description="実行計画")
+    code: str = Field(description="生成対象となるコード")
+```
+
+コード生成を行うスクリプトの詳細は以下をご参照ください。
+
+<details><summary>コード生成の関数（クリックで展開）</summary>
+
+コード生成を行う関数 `generate_code` を [src/modules/generate_code.py](/chapter5/src/modules/generate_code.py) に定義します。
+
+```python
+def generate_code(
+    data_info: str,
+    user_request: str,
+    remote_save_dir: str = "outputs/process_id/id",
+    previous_thread: DataThread | None = None,
+    model: str = "gpt-4o-mini-2024-07-18",
+    template_file: str = "src/prompts/generate_code.jinja",
+) -> LLMResponse:
+    template = load_template(template_file)
+    system_message = template.render(
+        data_info=data_info,
+        remote_save_dir=remote_save_dir,
+    )
+    messages = [
+        {"role": "system", "content": system_message},
+        {"role": "user", "content": f"タスク要求: {user_request}"},
+    ]
+    # 自己修正：レビュー結果（5.4.3項参照）があれば反映する
+    if previous_thread:
+        # 前のスレッドのコードを追加
+        messages.append({"role": "assistant", "content": previous_thread.code})
+        # 前のスレッドの標準出力と標準エラーを追加
+        if previous_thread.stdout and previous_thread.stderr:
+            messages.extend([
+                {"role": "system", "content": f"stdout: {previous_thread.stdout}"},
+                {"role": "system", "content": f"stderr: {previous_thread.stderr}"},
+            ])
+        # 前のスレッドの観測結果を追加
+        if previous_thread.observation:
+            messages.append({
+                "role": "user",
+                "content": f"以下を参考にして、ユーザー要求を満たすコードを再生成してください: {previous_thread.observation}",
+            })
+    return openai.generate_response(
+        messages,
+        model=model,
+        response_format=Program,
+    )
+```
+
+</details>
+
+<details><summary>コード生成のプロンプト（クリックで展開）</summary>
+<br/>
+
+またLLMがコード生成を行うためのプロンプトは [src/prompts/generate_code.jinja](src/prompts/generate_code.jinja) で記述しています。
+
+```jinja
+あなたは、データから重要なインサイトを引き出し、企業の戦略的意思決定を支援する優秀なデータサイエンティストです。
+豊富なデータセットを分析し、さまざまなデータ解析手法を駆使することができ、とくにPython を用いた AI や機械学習に優れています。
+あなたは、データ収集から前処理、探索的データ分析、そしてモデル構築までの一連のプロセスを管理します。
+具体的には、pandas や NumPy を用いたデータ操作や、scikit-learn を用いた機械学習モデルの構築、matplotlib や seaborn を用いた視覚化に取り組みます。
+また、必要に応じて SQL を使用し、データベースからのデータ抽出もこなします。
+あなたは周囲を巻き込むことの重要性を理解しており、データ分析の結果をチームや経営層に分かりやすく伝えるスキルを持っています。
+ビジネス目標に沿ったデータ戦略を立てることで、顧客のニーズを把握し、市場の変化に適応するための効果的な意思決定を促進します。
+
+あなたの最終目的は、ユーザーのタスク要求を満たすコードを提供することです。
+ユーザーからの要求は情報が不足している可能性があることを考慮し、ユーザーの意図を推測しながらタスク達成率を最大化してください。
+実行環境は安全なサンドボックスで動作しているため、任意の Python コードを実行できます。
+
+<コード生成の制約条件>
+- 参照対象のデータは df という変数で与えられています。** 与えられた df 以外のデータは作成しないこと。**
+- Notebook のコマンド規則を遵守し、unix コマンドを実行する際は、マジックコマンド ! を用いること。
+- セルには、論理的に正しく、同一セルの中でタスク要求を満たすようなコードを生成すること。
+- グラフをプロットする場合、ユーザーが後からスタイルを調整できるようにグラフのパラメータを引数として渡すこと。
+- 関数を記述する際は Google Style Python Docstrings を記述すること。
+- プログラムには、ユーザーが理解しやすいようにコードコメントを残すこと。
+- グラフや新しいデータは "{{ remote_save_dir }}" のディレクトリ下に適切なファイル名で保存すること。
+</コード生成の制約条件>
+
+{% if data_info %}
+<解析対象のデータ情報>
+解析対象となるデータ情報は以下の通りです。
+{{ data_info }}
+</解析対象のデータ情報>
+{% endif %}
+```
+
+</details>
+
+試しに [scripts/05_generate_code.py](/chapter5/scripts/05_generate_code.py) ファイルを実行して、コードを生成してみます。なおここでは「データの概要について教えて」という要求を指定しています。
+
+```bash
+uv run python scripts/05_generate_code.py
+```
+
 ### 5.4.2 コード実行（行動）
+
+```python
+```
 
 ### 5.4.3 実行結果のレビュー（知覚）
 
