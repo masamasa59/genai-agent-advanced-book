@@ -523,6 +523,17 @@ uv run python scripts/07_generate_review.py
 
 ### 5.4.4 コード生成・コード実行・実行結果のレビューのサイクル実行
 
+最後にここまでの一連の処理を実行します。
+
+```bash
+uv run python scripts/08_programmer.py
+```
+
+TODO: また、LangGraph を用いた処理について、いかに記述します。
+
+```bash
+uv run python 
+```
 
 ## 5.5 データ分析レポートの作成
 
