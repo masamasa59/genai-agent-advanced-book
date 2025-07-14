@@ -1,0 +1,103 @@
+[project]
+name = "chapter5"
+version = "0.1.0"
+description = "現場で活用するための生成AIエージェント実践入門, 第5章"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "e2b-code-interpreter>=1.1.0",
+    "jinja2>=3.1.6",
+    "langgraph>=0.3.11",
+    "loguru>=0.7.3",
+    "openai>=1.66.3",
+    "pandas>=2.2.3",
+    "pillow>=11.1.0",
+    "pydantic>=2.10.6",
+    "python-dotenv>=1.0.1",
+    "tabulate>=0.9.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ruff>=0.7.2",
+    "mypy>=1.13.0",
+    "typing-extensions>=4.9.0",
+    "pytest>=8.3.4",
+    "httpx>=0.28.0",
+]
+
+
+[tool.mypy]
+plugins = "pydantic.mypy"
+python_version = "3.12"
+check_untyped_defs = true
+disallow_any_explicit = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+show_error_context = true
+show_column_numbers = true
+warn_redundant_casts = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[[tool.mypy.overrides]]
+module = [
+    "dotenv.*",
+    "jinja2.*",
+    "loguru.*",
+    "pandas.*",
+    "openai.*",
+    "langgraph.*",
+]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D1",       # undocumented
+    "D213",     # multi-line summary second line
+    "TD001",    # invalid todo tag
+    "TD002",    # missing todo author
+    "TD003",    # missing todo link
+    "T201",     # allow use of print statement
+    "F401",     # unused imports (for missing modules)
+    "I001",     # import block is un-sorted or un-formatted
+    "INP001",   # file does not exist
+    "S101",     # use of assert statement
+    "ANN101",   # missing type annotation for self in method
+    "ANN102",   # missing type annotation for cls in classmethod
+    "PLR0913",  # too many arguments in function definition
+    "PLR2004",  # magic value used in comparison
+]
+unfixable = [
+    "F401", # unused import
+    "F841", # unused variable
+]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+known-first-party = ["src"]
+
+[tool.pylsp-mypy]
+enabled = true
+live_mode = false
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/node_modules", "**/__pycache__"]
+ignore = ["src/migrations"]
+defineConstant = { DEBUG = true }
+reportMissingImports = false
+reportMissingTypeStubs = false
