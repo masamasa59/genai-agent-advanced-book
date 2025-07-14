@@ -32,7 +32,7 @@ def generate_code(
                 [
                     {"role": "system", "content": f"stdout: {previous_thread.stdout}"},
                     {"role": "system", "content": f"stderr: {previous_thread.stderr}"},
-                ]
+                ],
             )
         # 前のスレッドの観測結果を追加
         if previous_thread.observation:
@@ -40,7 +40,7 @@ def generate_code(
                 {
                     "role": "user",
                     "content": f"以下を参考にして、ユーザー要求を満たすコードを再生成してください: {previous_thread.observation}",
-                }
+                },
             )
     return openai.generate_response(
         messages,

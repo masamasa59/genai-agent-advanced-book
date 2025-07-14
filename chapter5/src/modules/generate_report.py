@@ -1,5 +1,3 @@
-import base64
-import io
 from base64 import b64decode
 from io import BytesIO
 
@@ -53,11 +51,11 @@ def generate_report(
                             "type": "input_image",
                             "image_url": f"data:image/png;base64,{res['content']}",
                         },
-                    ]
+                    ],
                 )
             else:
                 user_contents.append(
-                    {"type": "text", "text": f"実行結果: {res['content']}"}
+                    {"type": "text", "text": f"実行結果: {res['content']}"},
                 )
         messages.append({"role": "user", "content": user_contents})
 
