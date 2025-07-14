@@ -25,6 +25,7 @@ COST = {
     },
 }
 
+
 def generate_response(
     messages: list,
     model: str = "gpt-4o-2024-11-20",
@@ -41,7 +42,8 @@ def generate_response(
     else:
         # Structured Outputs
         completion = client.responses.parse(
-            model=model, input=messages, text_format=response_format)
+            model=model, input=messages, text_format=response_format
+        )
         content = completion.output[content_idx].content[0].parsed
     # コスト計算
     input_cost = completion.usage.input_tokens * COST[model]["input"]

@@ -16,7 +16,8 @@ def execute_code(
     logger.debug(f"{execution=}")
     results = [
         {"type": "png", "content": r.png}
-        if r.png else {"type": "raw", "content": r.text}
+        if r.png
+        else {"type": "raw", "content": r.text}
         for r in execution.results
     ]
     return DataThread(

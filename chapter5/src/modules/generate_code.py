@@ -28,16 +28,20 @@ def generate_code(
         messages.append({"role": "assistant", "content": previous_thread.code})
         # 前のスレッドの標準出力と標準エラーを追加
         if previous_thread.stdout and previous_thread.stderr:
-            messages.extend([
-                {"role": "system", "content": f"stdout: {previous_thread.stdout}"},
-                {"role": "system", "content": f"stderr: {previous_thread.stderr}"},
-            ])
+            messages.extend(
+                [
+                    {"role": "system", "content": f"stdout: {previous_thread.stdout}"},
+                    {"role": "system", "content": f"stderr: {previous_thread.stderr}"},
+                ]
+            )
         # 前のスレッドの観測結果を追加
         if previous_thread.observation:
-            messages.append({
-                "role": "user",
-                "content": f"以下を参考にして、ユーザー要求を満たすコードを再生成してください: {previous_thread.observation}",
-            })
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"以下を参考にして、ユーザー要求を満たすコードを再生成してください: {previous_thread.observation}",
+                }
+            )
     return openai.generate_response(
         messages,
         model=model,

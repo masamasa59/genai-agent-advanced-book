@@ -39,14 +39,26 @@ def generate_report(
                 # img = Image.open(io.BytesIO(base64.decodebytes(bytes(res["content"], "utf-8"))))
                 image_data = b64decode(res["content"])
                 img = Image.open(BytesIO(image_data))
-                image_path = f"{data_thread.process_id}_{data_thread.thread_id}_{rix}.png"
+                image_path = (
+                    f"{data_thread.process_id}_{data_thread.thread_id}_{rix}.png"
+                )
                 img.save(f"{output_dir}/{image_path}")
-                user_contents.extend([
-                    {"type": "input_text", "text": f'画像パス: "{image_path}", 画像:'},
-                    {"type": "input_image", "image_url": f"data:image/png;base64,{res['content']}"},
-                ])
+                user_contents.extend(
+                    [
+                        {
+                            "type": "input_text",
+                            "text": f'画像パス: "{image_path}", 画像:',
+                        },
+                        {
+                            "type": "input_image",
+                            "image_url": f"data:image/png;base64,{res['content']}",
+                        },
+                    ]
+                )
             else:
-                user_contents.append({"type": "text", "text": f'実行結果: {res["content"]}'})
+                user_contents.append(
+                    {"type": "text", "text": f"実行結果: {res['content']}"}
+                )
         messages.append({"role": "user", "content": user_contents})
 
     # レポートの生成と保存
