@@ -361,10 +361,165 @@ uv run python scripts/05_generate_code.py
 
 ### 5.4.2 コード実行（行動）
 
+<details><summary>解析対象データのアップロード（クリックで展開）</summary>
+<br/>
+
+まずは E2B Sandbox 上でデータを解析できるようにするため、解析対象のデータを Sandbox 環境にアップロードしておきます。
+
+ここでは [src/modules/set_dataframe.py](/chapter5/src/modules/set_dataframe.py) で定義する `set_dataframe` 関数内で、`Sandbox.files.wirte` メソッドを用いてデータをアップロードします。
+
 ```python
+from e2b_code_interpreter import Sandbox
+from e2b_code_interpreter.models import Execution
+
+def set_dataframe(
+    sandbox: Sandbox,
+    data_file: str,
+    timeout: int = 1200
+) -> Execution:
+    remote_path = f"/home/{data_file}"
+    with open(data_file, "rb") as fi:
+        sandbox.files.write(remote_path, fi)
+    execution = sandbox.run_code(
+        f"import pandas as pd; df = pd.read_csv('{remote_path}')",
+        timeout=timeout
+    )
+    return execution
+```
+
+</details>
+
+<details><summary>生成されたコードを実行する関数（クリックで展開）</summary>
+<br/>
+
+次に LLM が生成したコードを E2B Sandbox 上で実行します。
+
+[src/modules/execute_code.py](/chapter5/src/modules/execute_code.py) の `execute_code` では、`Sandbox.run_code` メソッドを呼び出し、その実行結果を `DataThread` に格納しています。
+
+```python
+def execute_code(
+    sandbox: Sandbox,
+    process_id: str,
+    thread_id: int,
+    code: str,
+    user_request: str | None = None,
+    timeout: int = 1200,
+) -> DataThread:
+    execution = sandbox.run_code(code, timeout=timeout)
+    results = [
+        {"type": "png", "content": r.png}
+        if r.png else {"type": "raw", "content": r.text}
+        for r in execution.results
+    ]
+    return DataThread(
+        id=execution.execution_count,
+        process_id=process_id,
+        thread_id=thread_id,
+        user_request=user_request,
+        code=code,
+        error=getattr(execution.error, "traceback", None),
+        stderr="".join(execution.logs.stderr).strip(),
+        stdout="".join(execution.logs.stdout).strip(),
+        results=results,
+    )
+```
+
+</details>
+
+[scripts/06_execute_code.py](/chapter5/scripts/06_execute_code.py) ファイルを実行して、コードを実行してみます。ここでは `print(df.shape)` というデータサイズを確認するコードを用いて動作を確認します。
+
+```bash
+uv run python scripts/06_execute_code.py
 ```
 
 ### 5.4.3 実行結果のレビュー（知覚）
+
+最後に LLM を用いて実行された結果に対するレビューを行います。
+
+構造化出力用のデータ型を `Review` として [src/models/review.py](/chapter5/src/models/review.py) に定義します。
+
+
+```python
+class Review(BaseModel):
+    observation: str = Field(description="コードに対するフィードバックやコメント")
+    is_completed: bool = Field(description="実行結果がタスク要求を満たすか")
+```
+
+実行結果に対するレビューを生成するスクリプトの詳細は以下をご参照ください。
+
+<details><summary>実行結果に対してレビューを生成する関数（クリックで展開）</summary>
+
+[src/modules/generate_review.py](/chapter5/src/modules/generate_review.py) の `generate_review` 関数では、直前の実行結果を保持する `DataThread` インスタンスの値を参照して、そのレビューを生成します。
+
+```
+def generate_review(
+    data_info: str,
+    user_request: str,
+    data_thread: DataThread,
+    has_results: bool = False,
+    remote_save_dir: str = "outputs/process_id/id",
+    model: str = "gpt-4o-mini-2024-07-18",
+    template_file: str = "src/domain/modules/prompts/generate_review.jinja",
+) -> LLMResponse:
+    template = load_template(template_file)
+    system_instruction = template.render(
+        data_info=data_info,
+        remote_save_dir=remote_save_dir,
+    )
+    if has_results:
+        results = [
+            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{res['content']}"}}
+            if res["type"] == "png" else
+            {"type": "text", "text": res["content"]}
+            for res in data_thread.results
+        ]
+    messages = [
+        {"role": "system", "content": system_instruction},
+        {"role": "user", "content": user_request},
+        {"role": "assistant", "content": data_thread.code},
+        *([{"role": "system", "content": results}] if has_results else []),
+        {"role": "system", "content": f"stdout: {data_thread.stdout}"},
+        {"role": "system", "content": f"stderr: {data_thread.stderr}"},
+        {"role": "user", "content": "コードの修正方針を示してください。"},
+    ]
+    return openai.generate_response(
+        messages,
+        model=model,
+        response_format=Review,
+    )
+```
+
+</details>
+
+<details><summary>実行結果に対するレビュー生成のプロンプト（クリックで展開）</summary>
+
+```jinja
+あなたは、データから重要なインサイトを引き出し、企業の戦略的意思決定を支援する高度なデータサイエンティストです。
+豊富なデータセットを分析し、様々なデータ解析手法を駆使しており、特にPythonを用いたAIや機械学習に優れています。
+あなたは、データ収集から前処理、探索的データ分析、そしてモデル構築までの一連のプロセスを管理します。
+具体的には、pandasやNumPyを用いたデータ操作や、scikit-learnを用いた機械学習モデルの構築、matplotlibやSeabornを用いた視覚化に取り組みます。
+また、必要に応じてSQLを使用し、データベースからのデータ抽出もこなします。
+あなたは巻き込むことの重要性を理解しており、データ分析の結果をチームや経営陣に分かりやすく伝えるスキルを持っています。
+ビジネス目標に沿ったデータ戦略を立てることで、顧客のニーズを把握し、市場の変化に適応するための効果的な意思決定を促進します。
+
+あなたの最終目的は、提示されたコードがユーザのタスク要求を満たしているか判定し、フィードバックを提供することです。
+ユーザーからの要求は情報が不足している可能性があることを考慮し、ユーザーの意図を推測しながらタスク達成率を最大化してください。
+
+{% if data_info %}
+解析対象となるデータ情報は以下の通りです。
+{{ data_info }}
+{% endif %}
+```
+
+</details>
+<br/>
+
+試しに [scripts/07_generate_review.py](/chapter5/scripts/07_generate_review.py) ファイルを実行して、先ほどの `print(df.shape)` の実行結果に対するレビューを生成してみます。
+
+```bash
+uv run python scripts/07_generate_review.py
+```
+
 
 ### 5.4.4 コード生成・コード実行・実行結果のレビューのサイクル実行
 
