@@ -17,15 +17,15 @@ dependencies = [
     "tabulate>=0.9.0",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[project.optional-dependencies]
+dev = [
     "ruff>=0.7.2",
     "mypy>=1.13.0",
     "typing-extensions>=4.9.0",
     "pytest>=8.3.4",
     "httpx>=0.28.0",
+    "pandas-stubs>=2.2.0",
 ]
-
 
 [tool.mypy]
 plugins = "pydantic.mypy"
@@ -38,23 +38,13 @@ no_implicit_optional = true
 show_error_context = true
 show_column_numbers = true
 warn_redundant_casts = true
+ignore_missing_imports = true
 
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 warn_untyped_fields = true
-
-[[tool.mypy.overrides]]
-module = [
-    "dotenv.*",
-    "jinja2.*",
-    "loguru.*",
-    "pandas.*",
-    "openai.*",
-    "langgraph.*",
-]
-ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 88
@@ -68,6 +58,7 @@ select = ["ALL"]
 ignore = [
     "D1",       # undocumented
     "D213",     # multi-line summary second line
+    "ERA001",   # ignore detection of commented-out code
     "TD001",    # invalid todo tag
     "TD002",    # missing todo author
     "TD003",    # missing todo link
@@ -79,6 +70,8 @@ ignore = [
     "ANN102",   # missing type annotation for cls in classmethod
     "PLR0913",  # too many arguments in function definition
     "PLR2004",  # magic value used in comparison
+    "RUF001",   # allow unicode string normalization issues
+    "RUF003",   # allow ambiguous unicode character usage
 ]
 unfixable = [
     "F841", # unused variable
@@ -88,14 +81,8 @@ unfixable = [
 lines-after-imports = 2
 known-first-party = ["src"]
 
-[tool.pylsp-mypy]
-enabled = true
-live_mode = false
-
 [tool.pyright]
 include = ["src"]
-exclude = ["**/node_modules", "**/__pycache__"]
-ignore = ["src/migrations"]
-defineConstant = { DEBUG = true }
+exclude = ["**/__pycache__"]
 reportMissingImports = false
 reportMissingTypeStubs = false
