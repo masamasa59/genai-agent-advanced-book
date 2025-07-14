@@ -19,7 +19,8 @@ data_info = describe_dataframe(data_path)
 user_request = "データフレームのサイズを確認する"
 
 with Sandbox() as sandbox:
-    set_dataframe(sandbox, data_path)
+    with open(data_path, "rb") as fi:
+        set_dataframe(sandbox=sandbox, file_object=fi)
     data_thread = execute_code(
         process_id=process_id,
         thread_id=0,

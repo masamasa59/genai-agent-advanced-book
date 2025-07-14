@@ -27,7 +27,8 @@ def programmer_node(
     data_info = describe_dataframe(data_file)
     data_threads: list[DataThread] = []
     with Sandbox() as sandbox:
-        set_dataframe(sandbox, data_file)
+        with open(data_file, "rb") as fi:
+            set_dataframe(sandbox=sandbox, file_object=fi)
         for thread_id in range(n_trial):
             # 5.4.1. コード生成
             previous_thread = data_threads[-1] if data_threads else None

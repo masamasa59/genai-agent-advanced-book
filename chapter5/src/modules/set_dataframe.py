@@ -1,12 +1,17 @@
+import io
+
 from e2b_code_interpreter import Sandbox
 from e2b_code_interpreter.models import Execution
 
 
-def set_dataframe(sandbox: Sandbox, data_file: str, timeout: int = 1200) -> Execution:
-    remote_path = f"/home/{data_file}"
-    with open(data_file, "rb") as fi:
-        sandbox.files.write(remote_path, fi)
-    execution = sandbox.run_code(
-        f"import pandas as pd; df = pd.read_csv('{remote_path}')", timeout=timeout,
+def set_dataframe(
+    sandbox: Sandbox,
+    file_object: io.BytesIO,
+    timeout: int = 1200,
+    remote_data_path: str = "/home/data.csv",
+) -> Execution:
+    sandbox.files.write(remote_data_path, file_object)
+    return sandbox.run_code(
+        f"import pandas as pd; df = pd.read_csv('{remote_data_path}')",
+        timeout=timeout,
     )
-    return execution
