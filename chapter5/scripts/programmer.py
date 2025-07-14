@@ -1,3 +1,4 @@
+import io
 
 from e2b_code_interpreter import Sandbox
 from loguru import logger
@@ -20,7 +21,10 @@ def programmer_node(
     n_trial: int = 3,
     idx: int = 0,
 ) -> tuple[int, list[DataThread]]:
-    data_info = describe_dataframe(data_file)
+    template_file = "src/prompts/describe_dataframe.jinja"
+    with open(data_file, "rb") as fi:
+        file_object = io.BytesIO(fi.read())
+    data_info = describe_dataframe(file_object=file_object, template_file=template_file)
     data_threads: list[DataThread] = []
     with Sandbox() as sandbox:
         with open(data_file, "rb") as fi:
@@ -35,7 +39,7 @@ def programmer_node(
                 model=model,
             )
             program = response.content
-            logger.debug(f"{program=}")
+            logger.info(program.model_dump_json())
             # 5.4.2. コード実行
             data_thread = execute_code(
                 sandbox,
@@ -44,8 +48,10 @@ def programmer_node(
                 code=program.code,
                 user_request=user_request,
             )
-            logger.debug(f"{data_thread.stdout=}")
-            logger.debug(f"{data_thread.stderr=}")
+            if data_thread.stdout:
+                logger.debug(f"{data_thread.stdout=}")
+            if data_thread.stderr:
+                logger.warning(f"{data_thread.stderr=}")
             # 5.4.3. レビュー生成
             response = generate_review(
                 user_request=user_request,
@@ -54,14 +60,15 @@ def programmer_node(
                 model=model,
             )
             review = response.content
-            logger.debug(f"{review=}")
+            logger.info(review.model_dump_json())
             # data_threadを追加
             data_thread.observation = review.observation
             data_thread.is_completed = review.is_completed
             data_threads.append(data_thread)
             # 終了条件
             if data_thread.is_completed:
-                logger.success(f"{user_request=} | {review.observation=}")
-                logger.info(program.code)
+                logger.success(f"{user_request=}")
+                logger.success(f"{program.code=}")
+                logger.success(f"{review.observation=}")
                 break
     return idx, data_threads

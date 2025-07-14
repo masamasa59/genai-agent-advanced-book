@@ -6,11 +6,11 @@ from src.llms.utils import load_template
 
 
 def describe_dataframe(
-    data_file: str,
+    file_object: io.BytesIO,
     template_file: str = "src/prompts/describe_dataframe.jinja",
 ) -> str:
     # CSVファイルを読み込み、データフレームを作成
-    df = pd.read_csv(data_file)
+    df = pd.read_csv(file_object)
     # データフレームの概要情報を取得
     buf = io.StringIO()
     df.info(buf=buf)

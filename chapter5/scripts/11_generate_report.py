@@ -1,4 +1,5 @@
 import argparse
+import io
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -23,7 +24,9 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 計画生成
-    data_info = describe_dataframe(args.data_file)
+    with open(args.data_file, "rb") as fi:
+        file_object = io.BytesIO(fi.read())
+    data_info = describe_dataframe(file_object=file_object)
     response = generate_plan(
         data_info=data_info,
         user_request=args.user_request,

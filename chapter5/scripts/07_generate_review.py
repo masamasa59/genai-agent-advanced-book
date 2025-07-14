@@ -1,3 +1,5 @@
+import io
+
 from dotenv import load_dotenv
 from e2b_code_interpreter import Sandbox
 from loguru import logger
@@ -15,8 +17,12 @@ load_dotenv()
 def main() -> None:
     process_id = "07_generate_review"
     data_path = "data/sample.csv"
-    data_info = describe_dataframe(data_path)
+    template_file = "src/prompts/generate_review.jinja"
     user_request = "データフレームのサイズを確認する"
+
+    with open(data_path, "rb") as fi:
+        file_object = io.BytesIO(fi.read())
+    data_info = describe_dataframe(file_object=file_object, template_file=template_file)
 
     with Sandbox() as sandbox:
         with open(data_path, "rb") as fi:

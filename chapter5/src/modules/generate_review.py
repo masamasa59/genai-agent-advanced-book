@@ -35,7 +35,7 @@ def generate_review(
         *([{"role": "system", "content": results}] if has_results else []),
         {"role": "system", "content": f"stdout: {data_thread.stdout}"},
         {"role": "system", "content": f"stderr: {data_thread.stderr}"},
-        {"role": "user", "content": "コードの修正方針を示してください。"},
+        {"role": "user", "content": "実行結果に対するフィードバックを提供してください。"},
     ]
     return openai.generate_response(
         messages,

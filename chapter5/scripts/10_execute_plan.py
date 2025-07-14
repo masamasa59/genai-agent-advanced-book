@@ -1,4 +1,5 @@
 import base64
+import io
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from io import BytesIO
 from pathlib import Path
@@ -16,11 +17,14 @@ from src.modules import (
 
 def main() -> None:
     data_file = "data/sample.csv"
+    template_file = "src/prompts/generate_plan.jinja"
     user_request = "scoreを最大化するための広告キャンペーンを検討したい"
     output_dir = "outputs/tmp"
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     # 計画生成
-    data_info = describe_dataframe(data_file)
+    with open(data_file, "rb") as fi:
+        file_object = io.BytesIO(fi.read())
+    data_info = describe_dataframe(file_object=file_object, template_file=template_file)
     response = generate_plan(
         data_info=data_info,
         user_request=user_request,
