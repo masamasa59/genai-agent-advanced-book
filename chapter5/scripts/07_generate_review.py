@@ -2,10 +2,12 @@ from dotenv import load_dotenv
 from e2b_code_interpreter import Sandbox
 from loguru import logger
 
-from src.modules.describe_dataframe import describe_dataframe
-from src.modules.execute_code import execute_code
-from src.modules.generate_review import generate_review
-from src.modules.set_dataframe import set_dataframe
+from src.modules import (
+    describe_dataframe,
+    execute_code,
+    generate_review,
+    set_dataframe,
+)
 
 
 load_dotenv()

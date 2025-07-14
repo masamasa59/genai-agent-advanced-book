@@ -1,7 +1,7 @@
 from e2b_code_interpreter import Sandbox
 from loguru import logger
 
-from src.models.data_thread import DataThread
+from src.models import DataThread
 
 
 def execute_code(

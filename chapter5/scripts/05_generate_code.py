@@ -1,5 +1,4 @@
-from src.modules.describe_dataframe import describe_dataframe
-from src.modules.generate_code import generate_code
+from src.modules import describe_dataframe, generate_code
 
 
 data_path = "data/sample.csv"

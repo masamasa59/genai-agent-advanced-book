@@ -4,7 +4,7 @@ from jinja2 import Template
 from loguru import logger
 
 from src.llms.apis import openai
-from src.llms.models.llm_response import LLMResponse
+from src.llms.models import LLMResponse
 
 
 PROMPT = """プログラマにおける人格シミュレーションを行うため、与えられたペルソナ要求から、そのペルソナ定義書を作成してください。

@@ -1,8 +1,7 @@
 from dotenv import load_dotenv
 from e2b_code_interpreter import Sandbox
 
-from src.modules.execute_code import execute_code
-from src.modules.set_dataframe import set_dataframe
+from src.modules import execute_code, set_dataframe
 
 
 load_dotenv()

@@ -1,12 +1,14 @@
 from e2b_code_interpreter import Sandbox
 from loguru import logger
 
-from src.models.data_thread import DataThread
-from src.modules.describe_dataframe import describe_dataframe
-from src.modules.execute_code import execute_code
-from src.modules.generate_code import generate_code
-from src.modules.generate_review import generate_review
-from src.modules.set_dataframe import set_dataframe
+from src.models import DataThread
+from src.modules import (
+    describe_dataframe,
+    execute_code,
+    generate_code,
+    generate_review,
+    set_dataframe,
+)
 
 
 def programmer_node(

@@ -2,7 +2,7 @@ import io
 
 import pandas as pd
 
-from src.llms.utils.load_template import load_template
+from src.llms.utils import load_template
 
 
 def describe_dataframe(

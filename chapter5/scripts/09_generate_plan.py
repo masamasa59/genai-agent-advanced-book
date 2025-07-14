@@ -1,8 +1,7 @@
 
 from loguru import logger
 
-from src.modules.describe_dataframe import describe_dataframe
-from src.modules.generate_plan import generate_plan
+from src.modules import describe_dataframe, generate_plan
 
 
 data_path = "data/sample.csv"

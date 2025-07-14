@@ -1,8 +1,7 @@
 from src.llms.apis import openai
-from src.llms.models.llm_response import LLMResponse
-from src.llms.utils.load_template import load_template
-from src.models.data_thread import DataThread
-from src.models.program import Program
+from src.llms.models import LLMResponse
+from src.llms.utils import load_template
+from src.models import DataThread, Program
 
 
 def generate_code(
