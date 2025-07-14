@@ -12,28 +12,32 @@ from src.modules import (
 
 load_dotenv()
 
-process_id = "07_generate_review"
-data_path = "data/sample.csv"
-data_info = describe_dataframe(data_path)
+def main() -> None:
+    process_id = "07_generate_review"
+    data_path = "data/sample.csv"
+    data_info = describe_dataframe(data_path)
+    user_request = "データフレームのサイズを確認する"
 
-user_request = "データフレームのサイズを確認する"
+    with Sandbox() as sandbox:
+        with open(data_path, "rb") as fi:
+            set_dataframe(sandbox=sandbox, file_object=fi)
+        data_thread = execute_code(
+            process_id=process_id,
+            thread_id=0,
+            sandbox=sandbox,
+            user_request=user_request,
+            code="print(df.shape)",
+        )
+        logger.info(data_thread.model_dump())
 
-with Sandbox() as sandbox:
-    with open(data_path, "rb") as fi:
-        set_dataframe(sandbox=sandbox, file_object=fi)
-    data_thread = execute_code(
-        process_id=process_id,
-        thread_id=0,
-        sandbox=sandbox,
+    response = generate_review(
         user_request=user_request,
-        code="print(df.shape)",
+        data_info=data_info,
+        data_thread=data_thread,
     )
-    logger.info(data_thread.model_dump())
+    review = response.content
+    logger.info(review.model_dump_json(indent=4))
 
-response = generate_review(
-    user_request=user_request,
-    data_info=data_info,
-    data_thread=data_thread,
-)
-review = response.content
-print(review.model_dump())
+
+if __name__ == "__main__":
+    main()

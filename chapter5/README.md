@@ -235,7 +235,7 @@ results = [
 
 ### 5.4.3 実行結果のレビュー（知覚）
 
-最後に LLM を用いて実行された結果に対するレビューを行います。以下では、先ほどの `print(df.shape)` の実行結果に対するレビューを LLM が生成します。
+LLM を用いて実行された結果に対するレビューを行います。以下では、先ほどの `print(df.shape)` の実行結果に対するレビューを LLM が生成します。
 
 ```bash
 uv run python scripts/07_generate_review.py
@@ -256,92 +256,26 @@ uv run python scripts/08_programmer.py
 
 ## 5.5 データ分析レポートの作成
 
-5.4節で作成したプログラマーエージェントを拡張して、データ分析における実行計画の立案、および分析結果をまとめたレポートの作成を行うデータ分析エージェントワークフローを構築します。
+5.4節で作成したコードを拡張して、(1)データ分析における実行計画の立案、(2)および分析結果をまとめたレポートの作成、を行うデータ分析エージェントワークフローを構築します。
 
 <img src="https://i.gyazo.com/9ba402980e175726be4dd7bf598c56db.png">
 
-### 5.5.1 分析結果の立案（仮説構築）
+### 5.5.1 分析計画の立案（仮説構築）
 
-はじめに分析計画としてのデータ型を `Plan` として定義します。
-
-[src/models/plan.py](/chapter5/src/models/plan.py)
-
-```python
-class Task(BaseModel):
-    hypothesis: str = Field(description="分析レポートにおいて検証可能な仮説")
-    purpose: str = Field(description="仮説の検証目的")
-    description: str = Field(description="具体的な分析方針と可視化対象")
-    chart_type: str = Field(description="グラフ想定（例：ヒストグラム、棒グラフなど）")
-
-class Plan(BaseModel):
-    purpose: str = Field(description="タスク要求から解釈される問い合わせ目的")
-    archivement: str = Field(description="タスク要求から推測されるタスク達成条件")
-    tasks: list[Task]
-```
-
-<details><summary>分析計画の立案を実施する関数（クリックで展開）</summary>
-
-ユーザーからのタスク要求をいくつかのサブタスクに分解します。
-
-```python
-def generate_plan(
-    data_info: str,
-    user_request: str,
-    model: str = "gpt-4o-mini-2024-07-18",
-    template_file: str = "src/prompts/generate_plan.jinja",
-) -> LLMResponse:
-    template = load_template(template_file)
-    system_message = template.render(
-        data_info=data_info,
-    )
-    messages = [
-        {"role": "system", "content": system_message},
-        {"role": "user", "content": f"タスク要求: {user_request}"},
-    ]
-    return openai.generate_response(
-        messages,
-        model=model,
-        response_format=Plan,
-    )
-```
-
-</details>
-
-<details><summary>分析計画の立案におけるプロンプト（クリックで展開）</summary>
-
-```jinja
-あなたは、データから重要なインサイトを引き出し、企業の戦略的意思決定を支援する高度なデータサイエンティストです。
-豊富なデータセットを分析し、様々なデータ解析手法を駆使しており、特にPythonを用いたAIや機械学習に優れています。
-あなたは、データ収集から前処理、探索的データ分析、そしてモデル構築までの一連のプロセスを管理します。
-具体的には、pandasやNumPyを用いたデータ操作や、scikit-learnを用いた機械学習モデルの構築、matplotlibやSeabornを用いた視覚化に取り組みます。
-また、必要に応じてSQLを使用し、データベースからのデータ抽出もこなします。
-あなたは巻き込むことの重要性を理解しており、データ分析の結果をチームや経営陣に分かりやすく伝えるスキルを持っています。
-ビジネス目標に沿ったデータ戦略を立てることで、顧客のニーズを把握し、市場の変化に適応するための効果的な意思決定を促進します。
-
-あなたの最終目的は、ユーザから与えられた「タスク要求」をもとに、仮説を立てながら分析レポートの作成計画を練ることです。
-レポートは部長との60分間の戦略会合で活用され、分析方針を明確にしたり、マーケティング戦略の方向性を探るための叩き台となります。
-
-「タスク要求」には曖昧な部分が含まれることが多いため、それを前提に柔軟なアプローチを取る必要があります。
-与えられた情報から仮説を立て、その仮説に基づいてレポートを構成することで、具体的な分析方針や戦略の手がかりを示すことを目指してください。
-最終的なレポートは日本語で記述し、読み手にとってわかりやすく、実用的なものとなるよう心がけてください。
-
-{% if data_info %}
-なお解析対象となるデータ情報は以下の通りです。
-{{ data_info }}
-{% endif %}
-```
-
-</details>
-
-試しに [scripts/09_generate_plan.py](/chapter5/scripts/09_generate_plan.py) ファイルを実行して、プロフィールを生成してみます。
+LLM を用いて、ユーザーからの要求を構成的に分解します。
 
 ```bash
 uv run python scripts/09_generate_plan.py
 ```
 
+- 出力形式: [`Plan`](/chapter5/src/models/plan.py)
+- 計画立案の関数: [`generate_plan`](/chapter5/src/modules/generate_plan.py)
+- プロンプト: [`generate_plan.jinja`](/chapter5/src/prompts/generate_plan.jinja)
+
+
 ### 5.5.2 プログラムの実行
 
-生成された分析結果のタスクをそれぞれ実行します。
+5.5.1 で生成された分析計画の各サブタスクをそれぞれ実行します。
 
 ```bash
 uv run python scripts/10_execute_plan.py
@@ -350,7 +284,11 @@ uv run python scripts/10_execute_plan.py
 ### 5.5.3 実行結果を反映したレポート生成
 
 最後に計画に対する分析結果を見やすくまとめたレポートを生成します。
+分析結果は `outputs/{process_id}/report.md` に保存されます。
 
 ```bash
-uv run python scripts/11_generate_report.py
+uv run python scripts/11_generate_report.py \
+    --data_file "data/sample.csv" \
+    --user_request "scoreを最大化するための広告キャンペーンを検討したい" \
+    --process_id "sample"
 ```

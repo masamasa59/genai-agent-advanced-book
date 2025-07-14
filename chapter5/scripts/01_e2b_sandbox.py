@@ -4,7 +4,12 @@ from e2b_code_interpreter import Sandbox
 from loguru import logger
 
 
-load_dotenv()
-with Sandbox() as sandbox:
-    execution = sandbox.run_code("print('Hello World!')")
+def main() -> None:
+    load_dotenv()
+    with Sandbox() as sandbox:
+        execution = sandbox.run_code("print('Hello World!')")
     logger.info("\n".join(execution.logs.stdout))
+
+
+if __name__ == "__main__":
+    main()

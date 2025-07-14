@@ -22,9 +22,12 @@ def describe_dataframe(
     )
 
 
-
-if __name__ == "__main__":
+def main() -> None:
     data_file = "data/sample.csv"
     template_file = "src/prompts/describe_dataframe.jinja"
-    data_info = describe_dataframe(data_file, template_file)
+    data_info = describe_dataframe(data_file=data_file, template_file=template_file)
     logger.info(data_info)
+
+
+if __name__ == "__main__":
+    main()

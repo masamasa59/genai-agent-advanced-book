@@ -38,8 +38,11 @@ def generate_profile(
     return response
 
 
+def main() -> None:
+    role = "QAエンジニア"
+    response = generate_profile(role=role)
+    logger.info(response.content)
+
 
 if __name__ == "__main__":
-    role = "QAエンジニア"
-    response = generate_profile(role)
-    logger.debug(response.content)
+    main()
