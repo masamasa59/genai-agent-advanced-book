@@ -1,6 +1,6 @@
 import io
 
-from src.graph.models import ProgrammerState
+from src.graph.models.programmer_state import ProgrammerState
 from src.modules import describe_dataframe, set_dataframe
 
 

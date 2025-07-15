@@ -1,4 +1,4 @@
-from src.graph.models import DataThread, ProgrammerState
+from src.graph.models.programmer_state import DataThread, ProgrammerState
 from src.modules import execute_code
 
 

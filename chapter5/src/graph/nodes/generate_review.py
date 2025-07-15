@@ -1,5 +1,4 @@
-
-from src.graph.models import ProgrammerState
+from src.graph.models.programmer_state import ProgrammerState
 from src.modules import generate_review
 
 

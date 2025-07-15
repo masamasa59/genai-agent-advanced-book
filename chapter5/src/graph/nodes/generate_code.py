@@ -1,6 +1,6 @@
 import io
 
-from src.graph.models import DataThread, ProgrammerState
+from src.graph.models.programmer_state import DataThread, ProgrammerState
 from src.modules import describe_dataframe, generate_code
 
 

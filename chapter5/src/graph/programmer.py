@@ -5,7 +5,7 @@ from e2b_code_interpreter import Sandbox
 from langgraph.graph import END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
-from src.graph.models import ProgrammerState
+from src.graph.models.programmer_state import ProgrammerState
 from src.graph.nodes import (
     execute_code_node,
     generate_code_node,
@@ -14,7 +14,7 @@ from src.graph.nodes import (
 )
 
 
-def _build_graph() -> CompiledStateGraph:
+def build_programmer_graph() -> CompiledStateGraph:
     graph = StateGraph(ProgrammerState)
     graph.add_node("set_dataframe", set_dataframe_node)
     graph.add_node("generate_code", generate_code_node)
@@ -71,7 +71,7 @@ def main() -> None:
     parser.add_argument("--recursion_limit", type=int, default=15)
     args = parser.parse_args()
 
-    workflow = _build_graph()
+    workflow = build_programmer_graph()
     run_programmer_workflow(
         workflow=workflow,
         user_request=args.user_request,
