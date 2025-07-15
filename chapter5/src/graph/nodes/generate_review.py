@@ -1,3 +1,4 @@
+from e2b_code_interpreter import Sandbox
 from langgraph.graph import END
 from langgraph.types import Command
 
@@ -22,6 +23,7 @@ def generate_review_node(state: ProgrammerState) -> dict:
     thread.is_completed = review.is_completed
     threads[-1] = thread
     if review.is_completed:
+        Sandbox.kill(state["sandbox_id"])
         return Command(
             goto=END,
             update={

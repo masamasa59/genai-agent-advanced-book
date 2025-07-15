@@ -1,5 +1,6 @@
 import io
 
+from e2b_code_interpreter import Sandbox
 from langgraph.types import Command
 
 from src.graph.models.programmer_state import ProgrammerState
@@ -13,7 +14,8 @@ def set_dataframe_node(state: ProgrammerState) -> dict:
             file_object=file_object,
             template_file="src/prompts/describe_dataframe.jinja",
         )
-        set_dataframe(sandbox=state["sandbox"], file_object=file_object)
+        sandbox = Sandbox.connect(state["sandbox_id"])
+        set_dataframe(sandbox=sandbox, file_object=file_object)
     return Command(
         goto="generate_code",
         update={

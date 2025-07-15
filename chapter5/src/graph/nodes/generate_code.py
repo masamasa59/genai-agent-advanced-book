@@ -11,7 +11,7 @@ TEMPLATE_FILE = "src/prompts/generate_code.jinja"
 
 def generate_code_node(state: ProgrammerState) -> dict:
     threads = state["data_threads"]
-    request = state["user_request"]
+    request = state["task_request"]
     if len(threads) > 0:
         request += "\n" + threads[-1].observation
     with open(state["data_file"], "rb") as fi:

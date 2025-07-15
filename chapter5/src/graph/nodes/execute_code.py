@@ -1,3 +1,4 @@
+from e2b_code_interpreter import Sandbox
 from langgraph.types import Command
 
 from src.graph.models.programmer_state import DataThread, ProgrammerState
@@ -8,8 +9,9 @@ def execute_code_node(state: ProgrammerState) -> dict:
     thread_id = len(state["data_threads"])
     threads = state["data_threads"]
     thread = threads[-1]
+    sandbox = Sandbox.connect(state["sandbox_id"])
     original_data_thread = execute_code(
-        sandbox=state["sandbox"],
+        sandbox=sandbox,
         process_id="process_id",
         thread_id=thread_id,
         code=thread.code,

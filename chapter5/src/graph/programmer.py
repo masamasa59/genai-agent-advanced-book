@@ -32,53 +32,54 @@ def build_programmer_graph() -> CompiledStateGraph:
 
 def run_programmer_workflow(
     workflow: CompiledStateGraph,
-    user_request: str,
+    task_request: str,
     data_file: Path,
     # process_id: str,
     recursion_limit: int = 15,
 ) -> None:
-    with Sandbox() as sandbox:
-        for state in workflow.stream(
-            input={
-                "user_request": user_request,
-                "data_file": data_file,
-                "data_threads": [],
-                "sandbox": sandbox,
-                # "process_id": process_id,
-                # "current_thread_id": -1,
-            },
-            config={"recursion_limit": recursion_limit},
-        ):
-            for node_name, node_state in state.items():
-                logger.info(f"|--> {node_name}")
-                match node_name:
-                    case "set_dataframe":
-                        data_info = node_state["data_info"]
-                        print(data_info)
-                    case "generate_code":
-                        data_thread = node_state["data_threads"][-1]
-                        print(data_thread.code)
-                    case "execute_code":
-                        data_thread = node_state["data_threads"][-1]
-                        if data_thread.stdout:
-                            logger.info(data_thread.stdout)
-                        if data_thread.stderr:
-                            logger.warning(data_thread.stderr)
-                        if data_thread.results:
-                            print(data_thread.results)
-                    case "generate_review":
-                        data_thread = node_state["data_threads"][-1]
-                        if data_thread.is_completed:
-                            logger.success(f"observation: {data_thread.observation}")
-                        else:
-                            logger.warning(f"observation: {data_thread.observation}")
+    sandbox = Sandbox(timeout=1200)
+    sandbox_id = sandbox.sandbox_id
+    for state in workflow.stream(
+        input={
+            "task_request": task_request,
+            "data_file": data_file,
+            "data_threads": [],
+            "sandbox_id": sandbox_id,
+            # "process_id": process_id,
+            # "current_thread_id": -1,
+        },
+        config={"recursion_limit": recursion_limit},
+    ):
+        for node_name, node_state in state.items():
+            logger.info(f"|--> {node_name}")
+            match node_name:
+                case "set_dataframe":
+                    data_info = node_state["data_info"]
+                    print(data_info)
+                case "generate_code":
+                    data_thread = node_state["data_threads"][-1]
+                    print(data_thread.code)
+                case "execute_code":
+                    data_thread = node_state["data_threads"][-1]
+                    if data_thread.stdout:
+                        logger.info(data_thread.stdout)
+                    if data_thread.stderr:
+                        logger.warning(data_thread.stderr)
+                    if data_thread.results:
+                        print(data_thread.results)
+                case "generate_review":
+                    data_thread = node_state["data_threads"][-1]
+                    if data_thread.is_completed:
+                        logger.success(f"observation: {data_thread.observation}")
+                    else:
+                        logger.warning(f"observation: {data_thread.observation}")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_file", type=Path, default="data/sample.csv")
     parser.add_argument(
-        "--user_request",
+        "--task_request",
         type=str,
         default="scoreと曜日の関係について分析してください",
     )
@@ -89,7 +90,7 @@ def main() -> None:
     workflow = build_programmer_graph()
     run_programmer_workflow(
         workflow=workflow,
-        user_request=args.user_request,
+        task_request=args.task_request,
         data_file=args.data_file,
         # process_id=args.process_id,
         recursion_limit=args.recursion_limit,

@@ -1,6 +1,5 @@
 from typing import TypedDict
 
-from e2b_code_interpreter import Sandbox
 from pydantic import BaseModel, Field
 
 
@@ -19,9 +18,9 @@ class DataThread(BaseModel):
 class ProgrammerState(TypedDict):
     data_file: str
     data_info: str
-    user_request: str
+    task_request: str
     data_threads: list[DataThread]
-    sandbox: Sandbox
-    current_thread_id: int
-    process_id: str
+    sandbox_id: str
+    # current_thread_id: int
+    # process_id: str
     next_node: str
