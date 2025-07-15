@@ -24,3 +24,4 @@ class ProgrammerState(TypedDict):
     sandbox: Sandbox
     current_thread_id: int
     process_id: str
+    next_node: str

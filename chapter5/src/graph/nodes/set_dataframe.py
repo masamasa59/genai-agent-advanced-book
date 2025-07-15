@@ -1,5 +1,7 @@
 import io
 
+from langgraph.types import Command
+
 from src.graph.models.programmer_state import ProgrammerState
 from src.modules import describe_dataframe, set_dataframe
 
@@ -12,6 +14,10 @@ def set_dataframe_node(state: ProgrammerState) -> dict:
             template_file="src/prompts/describe_dataframe.jinja",
         )
         set_dataframe(sandbox=state["sandbox"], file_object=file_object)
-    return {
-        "data_info": data_info,
-    }
+    return Command(
+        goto="generate_code",
+        update={
+            "data_info": data_info,
+            "next_node": "generate_code",
+        },
+    )
