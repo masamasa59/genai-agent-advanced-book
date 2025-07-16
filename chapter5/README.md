@@ -5,12 +5,23 @@
 
 ## 準備
 
-```bash
-git clone https://github.com/masamasa59/genai-agent-advanced-book.git
-cd chapter5
+VSCode のターミナル追加で `chapter5` を選択し、ワークスペースを開きます。
 
-export PYTHONPATH="./:$PYTHONPATH"
+### Python 仮想環境の作成と依存関係のインストール
+
+依存関係のインストール
+
+```bash
+uv sync
 ```
+
+インストール後に作成した仮想環境をアクティブにします。
+
+```bash
+source .venv/bin/activate
+```
+
+### 環境変数のセット
 
 また `.env` ファイルに環境変数を設定します。
 各キーの取得方法については次のサブセクションをご参照ください。
@@ -31,7 +42,6 @@ OPENAI_API_KEY=sk-proj-***
 </details>
 
 <details><summary>OPENAI_API_KEY の設定（クリックで展開）</summary>
-### OpenAI
 
 テキスト生成は、OpenAI API を使用します。
 
