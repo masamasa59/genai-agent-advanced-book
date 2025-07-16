@@ -1,6 +1,7 @@
 import io
 
 from langgraph.types import Command
+from loguru import logger
 
 from src.graph.models.programmer_state import DataThread, ProgrammerState
 from src.modules import describe_dataframe, generate_code
@@ -10,8 +11,9 @@ TEMPLATE_FILE = "src/prompts/generate_code.jinja"
 
 
 def generate_code_node(state: ProgrammerState) -> dict:
-    threads = state["data_threads"]
-    request = state["task_request"]
+    logger.info("|--> generate_code")
+    threads = state.get("data_threads", [])
+    request = state["user_request"]
     if len(threads) > 0:
         request += "\n" + threads[-1].observation
     with open(state["data_file"], "rb") as fi:
@@ -25,7 +27,7 @@ def generate_code_node(state: ProgrammerState) -> dict:
         user_request=request,
     )
     thread = DataThread(
-        task_request=request,
+        user_request=request,
         code=response.content.code,
     )
     threads.append(thread)

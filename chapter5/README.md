@@ -304,3 +304,9 @@ uv run python scripts/11_generate_report.py \
 ```bash
 uv run python src/graph/programmer.py
 ```
+
+### 5.5 データ分析レポートの作成
+
+```bash
+uv run python src/graph/data_analysis.py
+```

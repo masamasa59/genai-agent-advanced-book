@@ -1,28 +1,24 @@
 from typing import Literal
 
-from e2b_code_interpreter import Sandbox
 from langgraph.types import Command, interrupt
+from loguru import logger
 
 from src.graph.models.data_analysis_state import DataAnalysisState
 
 
 def approve_plan(state: DataAnalysisState) -> Command[Literal["programmer", "generate_plan"]]:
+    logger.info("|--> approve_plan")
     is_approval = interrupt(
         {
-            "plan": state["plans"].model_dump(),
+            "sub_tasks": state["sub_tasks"],
         },
     )
     if is_approval.lower() == "y":
-        plan = state["plans"]
-        sandbox = Sandbox(timeout=1200)
-        sandbox_id = sandbox.sandbox_id
         return Command(
-            goto="programmer",
+            goto="open_programmer",
             update={
                 "user_approval": True,
-                "next_node": "programmer",
-                "task_request": plan.tasks[0].purpose,
-                "sandbox_id": sandbox_id,
+                "next_node": "open_programmer",
             },
         )
     return Command(

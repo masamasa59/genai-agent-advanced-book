@@ -3,8 +3,9 @@ import sys
 from pathlib import Path
 
 from e2b_code_interpreter import Sandbox
-from langgraph.graph import StateGraph
+from langgraph.graph import END, StateGraph
 from langgraph.graph.state import CompiledStateGraph
+from langgraph.types import Command
 from loguru import logger
 
 from src.graph.models.programmer_state import ProgrammerState
@@ -16,42 +17,44 @@ from src.graph.nodes import (
 )
 
 
-logger.remove()
-logger.add(sys.stdout, level="INFO")
+def _close_programmer_node(state: ProgrammerState) -> Command:
+    Sandbox.kill(state["sandbox_id"])
+    return Command(
+        goto=END,
+        update={
+            "next_node": END,
+        },
+    )
 
-
-def build_programmer_graph() -> CompiledStateGraph:
+def build_programmer_graph(close_programmer_fn: callable) -> CompiledStateGraph:
     graph = StateGraph(ProgrammerState)
     graph.add_node("set_dataframe", set_dataframe_node)
     graph.add_node("generate_code", generate_code_node)
     graph.add_node("execute_code", execute_code_node)
     graph.add_node("generate_review", generate_review_node)
+    graph.add_node("close_programmer", close_programmer_fn)
     graph.set_entry_point("set_dataframe")
     return graph.compile()
 
 
 def run_programmer_workflow(
     workflow: CompiledStateGraph,
-    task_request: str,
+    user_request: str,
     data_file: Path,
-    # process_id: str,
     recursion_limit: int = 15,
 ) -> None:
     sandbox = Sandbox(timeout=1200)
     sandbox_id = sandbox.sandbox_id
     for state in workflow.stream(
         input={
-            "task_request": task_request,
+            "user_request": user_request,
             "data_file": data_file,
             "data_threads": [],
             "sandbox_id": sandbox_id,
-            # "process_id": process_id,
-            # "current_thread_id": -1,
         },
         config={"recursion_limit": recursion_limit},
     ):
         for node_name, node_state in state.items():
-            logger.info(f"|--> {node_name}")
             match node_name:
                 case "set_dataframe":
                     data_info = node_state["data_info"]
@@ -79,7 +82,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_file", type=Path, default="data/sample.csv")
     parser.add_argument(
-        "--task_request",
+        "--user_request",
         type=str,
         default="scoreと曜日の関係について分析してください",
     )
@@ -87,12 +90,14 @@ def main() -> None:
     parser.add_argument("--recursion_limit", type=int, default=15)
     args = parser.parse_args()
 
-    workflow = build_programmer_graph()
+    logger.remove()
+    logger.add(sys.stdout, level="INFO")
+
+    workflow = build_programmer_graph(_close_programmer_node)
     run_programmer_workflow(
         workflow=workflow,
-        task_request=args.task_request,
+        user_request=args.user_request,
         data_file=args.data_file,
-        # process_id=args.process_id,
         recursion_limit=args.recursion_limit,
     )
 

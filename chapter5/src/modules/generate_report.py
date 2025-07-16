@@ -1,3 +1,4 @@
+import os
 from base64 import b64decode
 from io import BytesIO
 
@@ -18,6 +19,7 @@ def generate_report(
     output_dir: str = "outputs/sample",
     template_file: str = "src/prompts/generate_report.jinja",
 ) -> LLMResponse:
+    os.makedirs(output_dir, exist_ok=True)
     # プロンプトの構築
     template = load_template(template_file)
     system_message = template.render(data_info=data_info)

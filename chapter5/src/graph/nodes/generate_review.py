@@ -1,6 +1,5 @@
-from e2b_code_interpreter import Sandbox
-from langgraph.graph import END
 from langgraph.types import Command
+from loguru import logger
 
 from src.graph.models.programmer_state import ProgrammerState
 from src.models import Review
@@ -11,10 +10,11 @@ TEMPLATE_FILE = "src/prompts/generate_review.jinja"
 
 
 def generate_review_node(state: ProgrammerState) -> dict:
+    logger.info("|--> generate_review")
     threads = state["data_threads"]
     thread = threads[-1]
     response = generate_review(
-        user_request=thread.task_request,
+        user_request=thread.user_request,
         data_info=state["data_info"],
         data_thread=thread,
     )
@@ -23,12 +23,11 @@ def generate_review_node(state: ProgrammerState) -> dict:
     thread.is_completed = review.is_completed
     threads[-1] = thread
     if review.is_completed:
-        Sandbox.kill(state["sandbox_id"])
         return Command(
-            goto=END,
+            goto="close_programmer",
             update={
                 "data_threads": threads,
-                "next_node": END,
+                "next_node": "close_programmer",
             },
         )
     return Command(

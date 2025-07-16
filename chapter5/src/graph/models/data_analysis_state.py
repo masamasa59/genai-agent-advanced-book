@@ -1,17 +1,17 @@
-from operator import add
-from typing import Annotated, TypedDict
+from typing import TypedDict
 
 from src.graph.models.programmer_state import DataThread
-from src.models import Plan
+from src.models import SubTask
 
 
 class DataAnalysisState(TypedDict):
     data_file: str
     data_info: str
+    user_goal: str
     user_request: str
-    task_request: str
-    plans: Plan
-    data_threads: Annotated[list[list[DataThread]], add]
+    sub_tasks: list[SubTask]
+    data_threads: list[DataThread]
+    sub_task_threads: list[DataThread]
     report: str
     user_feedback: str
     user_approval: bool

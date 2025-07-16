@@ -2,9 +2,11 @@ from typing import TypedDict
 
 from pydantic import BaseModel, Field
 
+from src.models import SubTask
+
 
 class DataThread(BaseModel):
-    task_request: str | None
+    user_request: str | None
     code: str | None = None
     error: str | None = None
     stderr: str | None = None
@@ -18,9 +20,8 @@ class DataThread(BaseModel):
 class ProgrammerState(TypedDict):
     data_file: str
     data_info: str
-    task_request: str
+    user_request: str
     data_threads: list[DataThread]
     sandbox_id: str
-    # current_thread_id: int
-    # process_id: str
     next_node: str
+    sub_tasks: list[SubTask]
