@@ -1,10 +1,9 @@
 import datetime
-import os
 import urllib.parse
 from typing import Optional
 
 import cohere
-import feedparser
+import feedparser  # type: ignore
 from arxiv_researcher.logger import logger
 from arxiv_researcher.models import ArxivPaper
 from arxiv_researcher.searcher.searcher import Searcher
@@ -164,7 +163,7 @@ class ArxivSearcher(Searcher):
             ArxivFields,
             method="function_calling",
         )
-        return chain.invoke({"query": query})
+        return chain.invoke({"query": query})  # type: ignore
 
     def _date_selector(self, query: str) -> ArxivTimeRange:
         prompt = ChatPromptTemplate.from_template(DATE_SELECTOR_PROMPT)
@@ -177,7 +176,7 @@ class ArxivSearcher(Searcher):
                 "current_date": self.current_date,
                 "query": query,
             }
-        )
+        )  # type: ignore
 
     def _expand_query(self, goal_setting: str, query: str, feedback: str = "") -> str:
         prompt = ChatPromptTemplate.from_template(EXPAND_QUERY_PROMPT)
@@ -226,7 +225,7 @@ class ArxivSearcher(Searcher):
                             for link in entry.links
                             if link.type == "application/pdf"
                         ),
-                        None,
+                        "",
                     ),
                     abstract=entry.summary.replace("\n", " "),
                     published=datetime.datetime(*entry.published_parsed[:6]),
@@ -250,7 +249,7 @@ class ArxivSearcher(Searcher):
             else:
                 retry_count += 1
                 if retry_count < self.max_retries:
-                    feedback = f"検索結果が0件でした。クエリをより一般的なものや関連するキーワードに調整してください。"
+                    feedback = "検索結果が0件でした。クエリをより一般的なものや関連するキーワードに調整してください。"
                     logger.info(
                         f"No papers found. Retrying with adjusted query. Attempt {retry_count}/{self.max_retries}"
                     )
@@ -276,7 +275,8 @@ class ArxivSearcher(Searcher):
             papers = [
                 paper
                 for paper in reranked_papers
-                if paper.relevance_score >= self.RELEVANCE_SCORE_THRESHOLD
+                if paper.relevance_score is not None
+                and paper.relevance_score >= self.RELEVANCE_SCORE_THRESHOLD
             ]
 
         return papers

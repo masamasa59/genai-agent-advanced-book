@@ -1,25 +1,35 @@
 [project]
-name = "chapter4"
+name = "chapter7"
 version = "0.1.0"
-description = "Add your description here"
+description = ""
+authors = [
+    { name = "Your Name", email = "user@example.com" }
+]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "openai>1.68",
-    "langgraph==0.2.14",
-    "pydantic-settings==2.4.0",
-    "langchain>=0.2.15,<0.3.0",
-    "elasticsearch==8.15.0",
-    "pypdf==4.3.1",
-    "langchain-community==0.2.13",
-    "langchain-text-splitters==0.2.2",
-    "qdrant-client==1.11.1",    
+    "openai>=1.53.1",
+    "langgraph>=0.2.14",
+    "pydantic-settings>=2.4.0",
+    "langchain>=0.3.0",
+    "promptflow-tracing>=1.16.1",
+    "promptflow-devkit>=1.16.1",
+    "langchain-openai>=0.3.6",
+    "jira>=3.8.0"
 ]
-[tool.uv]
-dev-dependencies = [
-    "ruff>=0.11.4",
-    "ipykernel==6.29.5",
+
+[project.optional-dependencies]
+dev = [
+    "ipykernel>=6.29.5"
 ]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["chapter7"]
 
 [tool.ruff]
 select = [
@@ -37,7 +47,6 @@ exclude = [
 line-length = 119
 indent-width = 4
 target-version = "py312"
-extend-include = ["*.ipynb"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401", "F403"]

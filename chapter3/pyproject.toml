@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "genai-agent-chapter3"
+version = "0.1.0"
+description = "生成AIエージェント実践入門 第3章"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = {text = "MIT"}
+dependencies = [
+    "openai>=1.53.1",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.4.0",
+    "langchain>=0.3.0",
+    "langchain-community>=0.2.13",
+    "langchain-core>=0.3.0",
+    "duckduckgo-search>=3.0.0",
+    "requests>=2.31.0",
+    "langgraph>=0.2.14",
+    "jupyter>=1.0.0",
+    "ipython>=8.0.0",
+    "psycopg2-binary>=2.9.9",  # PostgreSQL接続用
+    "python-dotenv>=1.0.0",    # 環境変数管理用
+    "tavily-python>=0.3.0",    # Tavily検索用
+    "langchain-experimental>=0.3.0",  # SQLDatabaseChain用
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "isort",
+    "pytest",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+
+[tool.hatch.build.targets.wheel]
+include = [
+    "setup.py",
+    "README.md",
+    "requirements.txt",
+    "notebooks/*",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipykernel>=6.29.5",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "isort>=5.0.0",
+    "pytest>=7.0.0",
+]

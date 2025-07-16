@@ -1,8 +1,23 @@
 {
 	"folders": [
 		{
+			"path": "."
+		},
+		{
+			"path": "chapter3"
+		},
+		{
 			"path": "chapter4"
-		}
+		},
+		{
+			"path": "chapter5"
+		},
+		{
+			"path": "chapter6"
+		},
+		{
+			"path": "chapter7"
+		},
 	],
 	"settings": {
 		"notebook.formatOnSave.enabled": true,

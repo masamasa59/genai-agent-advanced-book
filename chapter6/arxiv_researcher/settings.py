@@ -51,7 +51,7 @@ class ModelSettings(BaseModel):
     # 複雑なタスク用のOpenAIモデル
     openai_smart_model: str = "gpt-4o"
     # レポート生成用のAnthropicモデル
-    anthropic_model: str = "claude-3-5-sonnet-20240620"
+    anthropic_model: str = "claude-3-7-sonnet-20250219"
     # 埋め込み用のOpenAIモデル
     openai_embedding_model: str = "text-embedding-3-small"
     # リランキング用のCohereモデル
@@ -66,7 +66,6 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore",
-        env_file_override=True,
     )
 
     # 必須のAPIキー
@@ -124,7 +123,7 @@ class Settings(BaseSettings):
         return ChatAnthropic(
             model=self.model.anthropic_model,
             temperature=self.model.temperature,
-            max_tokens=8192,
+            max_tokens=8_192,
         )
 
     @property

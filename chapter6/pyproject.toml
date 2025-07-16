@@ -7,20 +7,19 @@ requires-python = ">=3.11"
 dependencies = [
     "cohere==5.13.6",
     "feedparser==6.0.11",
-    "langchain-core==0.3.29",
-    "langchain-openai==0.3.0",
-    "langgraph-api==0.0.16",
-    "langgraph-checkpoint==2.0.9",
-    "langgraph==0.2.62",
+    "langchain-core==0.3.49",
+    "langchain-openai==0.3.11",
+    "langgraph-checkpoint==2.0.23",
+    "langgraph==0.3.21",
     "pydantic-settings==2.5.2",
     "tenacity==8.5.0",
-    "langchain-anthropic==0.3.1",
+    "langchain-anthropic==0.3.10",
     "retry==0.9.2",
 ]
 
 [tool.uv]
 dev-dependencies = [
-    "langgraph-cli[inmem]==0.1.65",
+    "langgraph-cli[inmem]==0.1.81",
 ]
 
 [tool.setuptools]

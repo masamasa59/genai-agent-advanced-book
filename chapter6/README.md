@@ -1,4 +1,4 @@
-# arXiv Researcher
+# 第6章 情報収集者を支援する：arXiv Researcher
 
 arXiv ResearcherはarXivのAPIを利用し、自然言語での質問に基づいて、関連する論文を検索し、その内容を簡潔にまとめます。
 

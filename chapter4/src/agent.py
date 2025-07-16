@@ -5,7 +5,6 @@ from langchain_core.utils.function_calling import convert_to_openai_tool
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
 from langgraph.pregel import Pregel
-from langsmith.run_helpers import traceable
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
@@ -59,8 +58,6 @@ class HelpDeskAgent:
         self.prompts = prompts
         self.client = OpenAI(api_key=self.settings.openai_api_key)
 
-    # @traceable
-    @traceable
     def create_plan(self, state: AgentState) -> dict:
         """計画を作成する
 
@@ -109,7 +106,6 @@ class HelpDeskAgent:
         # 生成した計画を返し、状態を更新する
         return {"plan": plan.subtasks}
 
-    @traceable
     def select_tools(self, state: AgentSubGraphState) -> dict:
         """ツールを選択する
 
@@ -148,11 +144,7 @@ class HelpDeskAgent:
 
             # NOTE: トークン数節約のため過去の検索結果は除く
             # roleがtoolまたはtool_callsを持つものは除く
-            messages = [
-                message
-                for message in messages
-                if message["role"] != "tool" or "tool_calls" not in message
-            ]
+            messages = [message for message in messages if message["role"] != "tool" or "tool_calls" not in message]
 
             user_retry_prompt = self.prompts.subtask_retry_answer_user_prompt
             user_message = {"role": "user", "content": user_retry_prompt}
@@ -177,10 +169,7 @@ class HelpDeskAgent:
 
         ai_message = {
             "role": "assistant",
-            "tool_calls": [
-                tool_call.model_dump()
-                for tool_call in response.choices[0].message.tool_calls
-            ],
+            "tool_calls": [tool_call.model_dump() for tool_call in response.choices[0].message.tool_calls],
         }
 
         logger.info("Tool selection complete!")
@@ -189,7 +178,6 @@ class HelpDeskAgent:
         # リトライの場合は追加分のメッセージのみを更新する
         return {"messages": messages}
 
-    @traceable
     def execute_tools(self, state: AgentSubGraphState) -> dict:
         """ツールを実行する
 
@@ -242,7 +230,6 @@ class HelpDeskAgent:
         logger.info("Tool execution complete!")
         return {"messages": messages, "tool_results": [tool_results]}
 
-    @traceable
     def create_subtask_answer(self, state: AgentSubGraphState) -> dict:
         """サブタスク回答を作成する
 
@@ -281,7 +268,6 @@ class HelpDeskAgent:
             "subtask_answer": subtask_answer,
         }
 
-    @traceable
     def reflect_subtask(self, state: AgentSubGraphState) -> dict:
         """サブタスク回答を内省する
 
@@ -334,18 +320,12 @@ class HelpDeskAgent:
             "is_completed": reflection_result.is_completed,
         }
 
-        if (
-            update_state["challenge_count"] >= MAX_CHALLENGE_COUNT
-            and not reflection_result.is_completed
-        ):
-            update_state["subtask_answer"] = (
-                f"{state['subtask']}の回答が見つかりませんでした。"
-            )
+        if update_state["challenge_count"] >= MAX_CHALLENGE_COUNT and not reflection_result.is_completed:
+            update_state["subtask_answer"] = f"{state['subtask']}の回答が見つかりませんでした。"
 
         logger.info("Reflection complete!")
         return update_state
 
-    @traceable
     def create_answer(self, state: AgentState) -> dict:
         """最終回答を作成する
 
@@ -360,10 +340,7 @@ class HelpDeskAgent:
         system_prompt = self.prompts.create_last_answer_system_prompt
 
         # サブタスク結果のうちタスク内容と回答のみを取得
-        subtask_results = [
-            (result.task_name, result.subtask_answer)
-            for result in state["subtask_results"]
-        ]
+        subtask_results = [(result.task_name, result.subtask_answer) for result in state["subtask_results"]]
         user_prompt = self.prompts.create_last_answer_user_prompt.format(
             question=state["question"],
             plan=state["plan"],
@@ -391,7 +368,6 @@ class HelpDeskAgent:
 
         return {"last_answer": response.choices[0].message.content}
 
-    @traceable
     def _execute_subgraph(self, state: AgentState):
         subgraph = self._create_subgraph()
 
@@ -417,7 +393,6 @@ class HelpDeskAgent:
 
         return {"subtask_results": [subtask_result]}
 
-    @traceable
     def _should_continue_exec_subtasks(self, state: AgentState) -> list:
         return [
             Send(
@@ -431,10 +406,7 @@ class HelpDeskAgent:
             for idx, _ in enumerate(state["plan"])
         ]
 
-    @traceable
-    def _should_continue_exec_subtask_flow(
-        self, state: AgentSubGraphState
-    ) -> Literal["end", "continue"]:
+    def _should_continue_exec_subtask_flow(self, state: AgentSubGraphState) -> Literal["end", "continue"]:
         if state["is_completed"] or state["challenge_count"] >= MAX_CHALLENGE_COUNT:
             return "end"
         else:

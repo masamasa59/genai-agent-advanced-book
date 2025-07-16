@@ -152,6 +152,7 @@ def add_documents_to_qdrant(
 
     for i, doc in enumerate(docs):
         content = doc.page_content
+        content = content.replace(" ", "")
         embedding = client.embeddings.create(
             model="text-embedding-3-small", input=content
         )

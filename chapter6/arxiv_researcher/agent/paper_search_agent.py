@@ -1,8 +1,8 @@
 import operator
-from typing import Annotated, Literal, TypedDict
+from typing import Annotated, TypedDict
 
 from langchain_openai import ChatOpenAI
-from langgraph.graph import END, START, StateGraph
+from langgraph.graph import StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
 from arxiv_researcher.agent.paper_analyzer_agent import (
@@ -62,9 +62,8 @@ class PaperSearchAgent:
         workflow.add_node("organize_results", self._organize_results)
 
         workflow.set_entry_point("search_papers")
-        workflow.set_finish_point("organize_results")
-
         workflow.add_edge("analyze_paper", "organize_results")
+        workflow.set_finish_point("organize_results")
 
         return workflow.compile()
 

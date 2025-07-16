@@ -81,11 +81,6 @@ class ResearchAgent:
         workflow.set_entry_point("user_hearing")
         workflow.set_finish_point("generate_report")
 
-        # 本当は定義しなくてもノードが接続されるはず
-        # rel: https://github.com/langchain-ai/langgraph/issues/2965
-        workflow.add_edge("human_feedback", "user_hearing")
-        workflow.add_edge("paper_search_agent", "evaluate_task")
-
         return workflow.compile(checkpointer=MemorySaver())
 
     def _human_feedback(

@@ -1,15 +1,15 @@
 {
     "jupyter.notebookFileRoot": "${workspaceFolder}",
-    "notebook.formatOnSave.enabled": true,
-    "notebook.formatOnCellExecution": true,
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
     "[python]": {
-        "editor.tabSize": 4,
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.codeActionsOnSave": {
             "source.fixAll.ruff": "explicit",
-            "source.organizeImports.ruff": "explicit"
-        }
-    }
+            "source.organizeImports.ruff": "explicit",
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff",
+    },
+    "notebook.codeActionsOnSave": {
+        "notebook.source.fixAll": "explicit",
+        "notebook.source.organizeImports": "explicit",
+    },
 }
