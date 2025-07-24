@@ -1,14 +1,5 @@
 from elasticsearch import Elasticsearch
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from qdrant_client import QdrantClient
-
-
-class Settings(BaseSettings):
-    openai_api_key: str
-    openai_api_base: str
-    openai_model: str
-
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 def delete_es_index(es: Elasticsearch, index_name: str) -> None:
