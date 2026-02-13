@@ -1,65 +1,65 @@
-# AIエージェント実践入門 第3章
+# Introduction to Practical AI Agents, Chapter 3
 
-本プロジェクトは「AIエージェント実践入門」第3章のサンプルコードを実行するための環境です。
+This project is an environment for running the sample code from Chapter 3 of "Introduction to Practical AI Agents."
 
-## 前提条件
+## Prerequisites
 
-このプロジェクトを実行するには、以下の準備が必要です：
+To run this project, you need the following:
 
-- Python 3.12 以上
-- Docker および Docker Compose
+- Python 3.12 or higher
+- Docker and Docker Compose
 - VSCode
-- VSCodeのMulti-root Workspaces機能を使用し、ワークスペースとして開いている（やり方は[こちら](../README.md)を参照）
-- OpenAIのアカウントとAPIキー
-- TAVILYのアカウントとAPIキー
+- Opened as a workspace using VSCode's Multi-root Workspaces feature (see [here](../README.md) for instructions).
+- OpenAI account and API key
+- TAVILY account and API key
 
-また、Python の依存関係は `pyproject.toml` に記載されています。
+Python dependencies are listed in `pyproject.toml`.
 
-## 環境構築
+## Environment Setup
 
-### 1. chapter3のワークスペースを開く
-chapter3 ディレクトリに仮想環境を作成します。
-VSCode の ターミナルの追加で`chapter3` を選択します。
+### 1. Open the chapter 3 workspace
+Create a virtual environment in the chapter3 directory.
+Select `chapter3` in the Add Terminal in VSCode.
 
-### 2. uvのインストール
+### 2. Install uv
 
-依存関係の解決には`uv`を利用します。
-`uv`を使ったことがない場合、以下の方法でインストールしてください。
+`uv` is used to resolve dependencies.
+If you have never used `uv` before, install it using the following method.
 
-`pip`を使う場合：
+Using `pip`:
 ```bash
 pip install uv
 ```
 
-MacまたはLinuxの場合：
+For Mac or Linux:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 3. Python 仮想環境の作成と依存関係のインストール
+### 3. Creating a Python Virtual Environment and Installing Dependencies
 
-依存関係のインストール
+Installing Dependencies
 ```bash
 uv sync
 ```
 
-インストール後に作成した仮想環境をアクティブにします。
+Activate the virtual environment created after installation.
 
 ```bash
 source .venv/bin/activate
 ```
 
-### 4. 環境変数のセット
-.env.exampleファイルをコピーし、以下の内容を追記した`.env` ファイルを作成してください。
+### 4. Setting Environment Variables
+Copy the .env.example file and create a `.env` file with the following content:
 
 ```bash
 
 ```env
-# OpenAI API設定
-# OpenAI APIキーを持っていない場合は、[OpenAIの公式サイト](https://platform.openai.com/)から取得してください。
+# OpenAI API Settings
+# If you do not have an OpenAI API key, obtain one from the [OpenAI official website](https://platform.openai.com/).
 OPENAI_API_KEY=your_openai_api_key
 
-# Tavily API設定（WEB検索用）
-# https://tavily.com でアカウントを作成してAPIキーを取得してください
+# Tavily API Settings (for web search)
+# Create an account at https://tavily.com and obtain your API key.
 TAVILY_API_KEY=your_tavily_api_key
 ```

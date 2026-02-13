@@ -1,24 +1,25 @@
-# 「現場で活用するためのAIエージェント実践入門」リポジトリ
+# "A Practical Introduction to AI Agents for Field Use" Repository
 
-<img src=".github/assets/cover.jpg" alt="書籍カバー" width="300">
+<img src=".github/assets/cover.jpg" alt="Book Cover" width="300">
 
-[「現場で活用するためのAIエージェント実践入門」（講談社）](www.amazon.co.jp/dp/4065401402)のリポジトリです。
+This is the repository for ["A Practical Introduction to AI Agents for Field Use" (Kodansha)] (www.amazon.co.jp/dp/4065401402).
 
-本リポジトリでは、書籍のうち実装に関する章を中心に、各章のコードや設定ファイルを提供しています。
+This repository provides code and configuration files for each chapter of the book, focusing on the implementation chapters.
 
-## 本リポジトリの使用方法
+## How to Use This Repository
 
-本リポジトリではVSCodeを使用した実行を想定しています。
+This repository is intended for use with VSCode.
 
-各章で独立した管理を行うためにVSCodeのMulti-root workspaces（以降ワークスペース）を活用します。
-   
-ワークスペースでの作業は以下のいずれかの方法で行います。
-- Finderやエクスプローラーで本リポジトリ内の`genai-book.code-workspace`ファイルをダブルクリックしてVSCodeを起動する
-- VSCodeのメニューから`ファイル > ファイルでワークスペースを開く`を選択し、`genai-book.code-workspace`ファイルを選択する
+This repository utilizes VSCode's multi-root workspaces (hereafter referred to as workspaces) to manage each chapter independently.
 
-各章のコードは、`chapter<章番号>`ディレクトリに格納されており、ワークスペースとして個別に開くことができます。
-実行する際はそれぞれの章のREADME.mdを参照し、環境構築や実行方法を確認してください。特に**Pythonの仮想環境はそれぞれの章のワークスペース内に作成することを想定しているのでご注意ください。**
+Working in a workspace can be done in one of the following ways:
+- Launch VS Code by double-clicking the `genai-book.code-workspace` file in this repository in Finder or Explorer.
+- Select `File > Open Workspace with File` from the VS Code menu and select the `genai-book.code-workspace` file.
 
-## サポート
-- 疑問点や不具合の報告はGitHubのIssuesで受け付けています。不明な点などがございましたら、[issues](https://github.com/masamasa59/genai-agent-advanced-book/issues)をご覧ください。
-- 書籍の誤植（修正対応済み）は、[誤植一覧 (Closed)](https://github.com/masamasa59/genai-agent-advanced-book/issues?q=state%3Aclosed%20label%3A%E8%AA%A4%E6%A4%8D)にまとめています。修正対応前の誤植は[誤植一覧 (Open)](https://github.com/masamasa59/genai-agent-advanced-book/issues?q=state%3Aopen%20label%3A%E8%AA%A4%E6%A4%8D)にあります。あわせてご参照ください。
+The code for each chapter is stored in the `chapter<chapter number>` directory and can be opened individually as a workspace.
+
+To run the code, refer to the README.md for each chapter to confirm environment setup and execution instructions. Please note in particular that the Python virtual environment is intended to be created within each chapter's workspace.
+
+## Support
+- Questions and bug reports are accepted through GitHub Issues. If you have any questions, please see [issues](https://github.com/masamasa59/genai-agent-advanced-book/issues).
+- Typo listings in the book (which have been corrected) are listed in the [Typo List (Closed)](https://github.com/masamasa59/genai-agent-advanced-book/issues?q=state%3Aclosed%20label%3A%E8%AA%A4%E6%A4%8D). Typo listings before corrections are listed in the [Typo List (Open)](https://github.com/masamasa59/genai-agent-advanced-book/issues?q=state%3Aopen%20label%3A%E8%AA%A4%E6%A4%8D). Please refer to these as well.

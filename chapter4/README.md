@@ -1,85 +1,85 @@
-# 現場で活用するためのAIエージェント実践入門 - Chapter 4
+# Practical Introduction to AI Agents for Field Use - Chapter 4
 
-このディレクトリは、書籍「現場で活用するためのAIエージェント実践入門」（講談社）の第4章に関連するソースコードとリソースを含んでいます。
+This directory contains source code and resources related to Chapter 4 of the book "Practical Introduction to AI Agents for Field Use" (Kodansha).
 
-4章記載のコードを実行するためには、以下の手順に従ってください。
+To run the code in Chapter 4, follow the steps below.
 
-## 前提条件
+## Prerequisites
 
-このプロジェクトを実行するには、以下の準備が必要です：
+To run this project, you need the following:
 
-- Python 3.12 以上
-- Docker および Docker Compose
-- VSCode
-- VSCodeのMulti-root Workspaces機能を使用し、ワークスペースとして開いている（やり方は[こちら](../README.md)を参照）
-- OpenAIのアカウントとAPIキー
+- Python 3.12 or higher
+- Docker and Docker Compose
+- VS Code
+- Opened as a workspace using VS Code's Multi-root Workspaces feature (see [here](../README.md) for instructions)
+- OpenAI account and API key
 
-また、Python の依存関係は `pyproject.toml` に記載されています。
+Python dependencies are listed in `pyproject.toml`.
 
-## 環境構築
+## Environment Setup
 
-### 1. chapter4のワークスペースを開く
-chapter4 ディレクトリに仮想環境を作成します。
-VSCode の ターミナルの追加で`chapter4` を選択します。
+### 1. Open the chapter 4 workspace
+Create a virtual environment in the chapter 4 directory.
+Select `chapter 4` in the Add Terminal in VS Code.
 
-### 2. uvのインストール
+### 2. Install uv
 
-依存関係の解決には`uv`を利用します。
-`uv`を使ったことがない場合、以下の方法でインストールしてください。
+Use `uv` to resolve dependencies.
+If you have never used `uv`, install it as follows:
 
-`pip`を使う場合：
+Using `pip`:
 ```bash
 pip install uv
 ```
 
-MacまたはLinuxの場合：
+For Mac or Linux:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 3. Python 仮想環境の作成と依存関係のインストール
+### 3. Create a Python Virtual Environment and Install Dependencies
 
-依存関係のインストール
+Install Dependencies
 ```bash
 uv sync
 ```
 
-インストール後に作成した仮想環境をアクティブにします。
+Activate the virtual environment created after installation.
 
-```bash
+``bash
 source .venv/bin/activate
 ```
 
-### 4. 環境変数のセット
-`.env` ファイルを作成し、以下の内容を追加します。
+### 4. Set Environment Variables
+Create a `.env` file and add the following content:
 
-OpenAI APIキーを持っていない場合は、[OpenAIの公式サイト](https://platform.openai.com/)から取得してください。
+If you do not have an OpenAI API key, obtain one from the [OpenAI official website](https://platform.openai.com/).
 
 ```bash
 
 ```env
-# OpenAI API設定
+# OpenAI API Settings
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_API_BASE="https://api.openai.com/v1"
 OPENAI_MODEL= "gpt-4o-2024-08-06"
 ```
 
-### 5. 検索インデックスの構築
+### 5. Building a Search Index
 
-makeコマンドを使用します。
+Use the make command.
 
 ```bash
-#コンテナの起動
+#Starting the Container
 make start.engine
 
-#インデックスの構築
+#Building the Index
 make create.index
 ```
 
-`create.index`実行時にElasticsearchのコンテナでエラーが発生する場合は、`docker-compose.yml`の以下の行をコメントアウトしてください。
-コメントアウトした場合、Elasticsearchのデータは永続化されないため、コンテナを削除した場合に再度インデックスを構築する必要があります。
+If an error occurs in the Elasticsearch container when running `create.index`, comment out the following line in `docker-compose.yml`.
+If you comment it out, Elasticsearch data will not be persisted, so you will need to rebuild the index if you delete the container.
 
 ```yaml
-    volumes:
-      - ./.rag_data/es_data:/usr/share/elasticsearch/data
+volumes:
+- ./.rag_data/es_data:/usr/share/elasticsearch/data
 ```

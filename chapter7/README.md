@@ -1,121 +1,121 @@
-# 現場で活用するためのAIエージェント実践入門 - 第7章
+# Practical Introduction to AI Agents for Field Use - Chapter 7
 
-このディレクトリは、書籍「現場で活用するためのAIエージェント実践入門」（講談社）の第7章に関連するソースコードとリソースを含んでいます。
+This directory contains source code and resources related to Chapter 7 of the book "Practical Introduction to AI Agents for Field Use" (Kodansha).
 
-第7章では、**意思決定支援エージェント**と**パーソナライズ施策支援エージェント**の実装を通じて、マルチエージェントの構築方法を学習します。
+In Chapter 7, you will learn how to build multi-agent systems through the implementation of a **decision support agent** and a **personalization policy support agent**.
 
-7章記載のコードを実行するためには、以下の手順に従ってください。
+To run the code in Chapter 7, follow the steps below.
 
-## 前提条件
+## Prerequisites
 
-このプロジェクトを実行するには、以下の準備が必要です：
+To run this project, you will need the following:
 
-- Python 3.12 以上
-- VSCode
-- VSCodeのMulti-root Workspaces機能を使用し、ワークスペースとして開いている（やり方は[こちら](../README.md)を参照）
-- OpenAIのアカウントとAPIキー
+- Python 3.12 or higher
+- VS Code
+- Opened as a workspace using VS Code's Multi-root Workspaces feature (see [here](../README.md) for instructions)
+- OpenAI account and API key
 
-また、Python の依存関係は `pyproject.toml` に記載されています。
+Python dependencies are listed in `pyproject.toml`.
 
-## 環境構築
+## Environment Setup
 
-### 1. chapter7のワークスペースを開く
-chapter7 ディレクトリに仮想環境を作成します。
-VSCode の ターミナルの追加で`chapter7` を選択します。
+### 1. Open the chapter 7 workspace
+Create a virtual environment in the chapter7 directory.
+Select `chapter7` in the Add Terminal in VS Code.
 
-### 2. uvのインストール
+### 2. Installing uv
 
-依存関係の解決には`uv`を利用します。
-`uv`を使ったことがない場合、以下の方法でインストールしてください。
+We use `uv` to resolve dependencies.
+If you have never used `uv` before, install it as follows.
 
-`pip`を使う場合：
+Using `pip`:
 ```bash
 pip install uv
 ```
 
-MacまたはLinuxの場合：
+Mac or Linux:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 3. Python 仮想環境の作成と依存関係のインストール
+### 3. Creating a Python Virtual Environment and Installing Dependencies
 
-依存関係のインストール
+Installing Dependencies
 ```bash
 uv sync
 ```
 
-インストール後に作成した仮想環境をアクティブにします。
+Activate the virtual environment created after installation.
 
-```bash
+``bash
 source .venv/bin/activate
 ```
 
-### 4. 環境変数のセット
-.env.exampleファイルをコピーし、以下の内容を追記した`.env` ファイルを作成してください。
+### 4. Setting Environment Variables
+Copy the .env.example file and create a `.env` file with the following content:
 
-OpenAI APIキーを持っていない場合は、[OpenAIの公式サイト](https://platform.openai.com/)から取得してください。
+If you do not have an OpenAI API key, obtain one from the [OpenAI official website](https://platform.openai.com/).
 
 ```bash
 
 ```env
-# OpenAI API設定
+# OpenAI API settings
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_API_BASE="https://api.openai.com/v1"
 OPENAI_MODEL= "gpt-4o-2024-08-06"
 ```
 
-## ディレクトリ構成
+## Directory structure
 
 ```
 chapter7/
-├── .env.sample                           # 環境変数のサンプルファイル
-├── .python-version                       # Python バージョン指定
-├── pyproject.toml                        # Python プロジェクト設定
-├── uv.lock                              # 依存関係のロックファイル
-├── notebooks/                           # Jupyter Notebook ファイル
-│   ├── decision_support_agent_runner.ipynb  # 意思決定支援エージェントの実行例
-│   └── macrs_runner.ipynb               # MACRS の実行例
-└── src/                                 # ソースコード
-    ├── custom_logger.py                 # カスタムロガー
-    ├── decision_support_agent/          # 意思決定支援エージェント
-    │   ├── agent.py                     # エージェントのメインロジック
-    │   ├── configs.py                   # 設定ファイル
-    │   ├── models.py                    # データモデル
-    │   └── prompts.py                   # プロンプトテンプレート
-    └── macrs/                           # MACRS（Multi-Agent Collaborative Review System）
-        ├── agent.py                     # パーソナライズ施策支援エージェントのメインロジック
-        ├── configs.py                   # 設定ファイル
-        ├── custom_logger.py             # カスタムロガー
-        ├── models.py                    # データモデル
-        └── prompts.py                   # プロンプトテンプレート
+├── .env.sample # Environment variable sample file
+├── .python-version # Python version specification
+├── pyproject.toml # Python project settings
+├── uv.lock # Dependency lock file
+├── notebooks/ # Jupyter Notebook files
+│ ├── decision_support_agent_runner.ipynb # Decision support agent execution example
+│ └── macrs_runner.ipynb # MACRS execution example
+└── src/ # Source code
+├── custom_logger.py # Custom Logger
+├── decision_support_agent/ # Decision Support Agent
+│ ├── agent.py # Agent Main Logic
+│ ├── configs.py # Configuration File
+│ ├── models.py # Data Model
+│ └── prompts.py # Prompt Template
+└── macrs/ # MACRS (Multi-Agent Collaborative Review System)
+├── agent.py # Personalized Policy Support Agent Main Logic
+├── configs.py # Configuration File
+├── custom_logger.py # Custom Logger
+├── models.py # Data Model
+└── prompts.py # Prompt Template
 ```
 
-## 使用方法
+## Usage
 
-### 意思決定支援エージェント
+### Decision Support Agent
 
-1. `notebooks/decision_support_agent_runner.ipynb` を開きます。
-2. セルを順番に実行して、意思決定支援エージェントの動作を確認します。
+1. Open `notebooks/decision_support_agent_runner.ipynb`.
+2. Run the cells sequentially to verify the behavior of the decision support agent.
 
-### MACRS（Multi-Agent Collaborative Review System）
+### MACRS (Multi-Agent Collaborative Review System)
 
-1. `notebooks/macrs_runner.ipynb` を開きます。
-2. セルを順番に実行して、パーソナライズ施策支援エージェントの動作を確認します。
+1. Open `notebooks/macrs_runner.ipynb`.
+2. Run the cells sequentially to verify the behavior of the personalization support agent.
 
-## 主要な機能
+## Main Features
 
-### 意思決定支援エージェント
-- ペルソナベースの多角的な意見生成
-- 改善提案の自動生成
-- LangGraphを使用した複雑なワークフロー管理
+### Decision Support Agent
+- Persona-based, multifaceted opinion generation
+- Automatic generation of improvement proposals
+- Complex workflow management using LangGraph
 
 ### MACRS
-- 複数エージェントによる協調的なレビューシステム
-- 非同期処理による効率的なレビュープロセス
+- Multi-agent collaborative review system
+- Efficient review process with asynchronous processing
 
-## 注意事項
+## Notes
 
-- OpenAI API キーが必要です。事前に取得してください。
-- Python の仮想環境を有効にした状態で作業を行ってください。
-- 詳細は書籍の該当章を参照してください。
+- An OpenAI API key is required. Please obtain it in advance.
+- Please work with a Python virtual environment enabled.
+- For details, please refer to the relevant chapter in the book.
