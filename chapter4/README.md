@@ -9,7 +9,7 @@
 このプロジェクトを実行するには、以下の準備が必要です：
 
 - Python 3.12 以上
-- Docker および Docker Compose
+- Docker および Docker Compose（[Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/) をインストールし、起動しておく。ターミナルで `docker` が見つからない場合は、Docker Desktop 起動後に `export PATH="/usr/local/bin:$PATH"` を実行するか、ターミナルを開き直す）
 - VSCode
 - VSCodeのMulti-root Workspaces機能を使用し、ワークスペースとして開いている（やり方は[こちら](../README.md)を参照）
 - OpenAIのアカウントとAPIキー
@@ -61,7 +61,7 @@ OpenAI APIキーを持っていない場合は、[OpenAIの公式サイト](http
 # OpenAI API設定
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_API_BASE="https://api.openai.com/v1"
-OPENAI_MODEL= "gpt-4o-2024-08-06"
+OPENAI_MODEL=gpt-4o-2024-08-06
 ```
 
 ### 5. 検索インデックスの構築

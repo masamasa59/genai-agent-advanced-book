@@ -1,5 +1,5 @@
-version: '3.8'
-
+# パスに日本語などが含まれると Docker のファイル共有でエラーになるため、
+# ボリュームをコメントアウト（データはコンテナ内のみ。コンテナ削除時は make create.index で再構築）
 services:
   elasticsearch:
     build:
@@ -11,13 +11,13 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-    volumes:
-      - ./.rag_data/es_data:/usr/share/elasticsearch/data
+    # volumes:
+    #   - ./.rag_data/es_data:/usr/share/elasticsearch/data
 
   qdrant:
     image: qdrant/qdrant:v1.11.3
     container_name: qdrant
     ports:
       - "6333:6333"
-    volumes:
-      - ./.rag_data/qdrant_data:/qdrant/storage
+    # volumes:
+    #   - ./.rag_data/qdrant_data:/qdrant/storage

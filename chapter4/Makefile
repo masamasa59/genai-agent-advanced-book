@@ -1,10 +1,15 @@
+# Docker CLIの絶対パス（Docker Desktop標準の場所。別の場所の場合は make start.engine DOCKER_BIN=/path/to/docker）
+DOCKER_BIN ?= /Applications/Docker.app/Contents/Resources/bin/docker
+# イメージ取得時に docker-credential-desktop が必要なので、同じ bin を PATH に追加
+DOCKER_BIN_DIR := /Applications/Docker.app/Contents/Resources/bin
+
 .PHONY: start.engine
 start.engine:
-	@docker compose up -d
+	@PATH="$(DOCKER_BIN_DIR):$$PATH" $(DOCKER_BIN) compose up -d
 
 .PHONY: stop.engine
 stop.engine:
-	@docker compose down
+	@PATH="$(DOCKER_BIN_DIR):$$PATH" $(DOCKER_BIN) compose down
 
 .PHONY: create.index
 create.index:
@@ -13,3 +18,8 @@ create.index:
 .PHONY: delete.index
 delete.index:
 	@uv run python -m src.scripts.delete_index
+
+# docker の場所を確認する（DOCKER_BIN が違う場合の調査用）
+.PHONY: docker-check
+docker-check:
+	@echo "DOCKER_BIN=$(DOCKER_BIN)"; ls -la /Applications/Docker.app/Contents/Resources/bin/ 2>/dev/null || echo "※ 上記パスに docker が無い場合は、Docker Desktop の設定で CLI のパスを確認してください"
