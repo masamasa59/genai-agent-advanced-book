@@ -16,6 +16,19 @@
 
 また、Python の依存関係は `pyproject.toml` に記載されています。
 
+## 実行場所について（重要）
+
+- **ターミナルでコマンドを実行するとき**  
+  必ず **chapter4 ディレクトリに移動してから** 実行してください。  
+  ```bash
+  cd /path/to/genai-agent-advanced-book/chapter4
+  source .venv/bin/activate   # 仮想環境を使う場合
+  make start.engine           # ここで make や uv run など
+  ```
+- **ノートブック用の Python コード**  
+  `from src.xxx` や `Settings()` などのコードは **ノートブックのセル** で実行してください。  
+  ターミナル（zsh など）に貼り付けるとシェルが解釈してエラーになります。
+
 ## 環境構築
 
 ### 1. chapter4のワークスペースを開く

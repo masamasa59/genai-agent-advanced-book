@@ -1,5 +1,6 @@
 {
     "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
     "[python]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {

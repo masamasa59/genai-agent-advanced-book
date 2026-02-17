@@ -19,6 +19,11 @@ create.index:
 delete.index:
 	@uv run python -m src.scripts.delete_index
 
+# .env が読めているか・Settings が使えるかを確認（ターミナルは chapter4 で実行すること）
+.PHONY: check.env
+check.env:
+	@uv run python -c "import src.configs as c; print('env_path:', c._env_path, 'exists:', c._env_path.is_file()); from src.configs import Settings; s = Settings(); print('OK model:', s.openai_model)"
+
 # docker の場所を確認する（DOCKER_BIN が違う場合の調査用）
 .PHONY: docker-check
 docker-check:
