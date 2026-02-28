@@ -6,4 +6,4 @@ class Settings(BaseSettings):
     openai_api_base: str
     openai_model: str
 
-    model_config = SettingsConfigDict(env_file="./chapter4/.env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
